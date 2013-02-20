@@ -21,7 +21,6 @@ public class SimpleArtistFactory {
 	
 	
 	
-	
 	public SimpleArtistFactory(final AOProxyFactory aoProxyFactory) {
 		this.aoProxyFactory=aoProxyFactory;
 	}
