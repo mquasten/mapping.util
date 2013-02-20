@@ -18,7 +18,6 @@ import de.mq.mapping.util.proxy.model.ArtistAO;
 @ContextConfiguration(locations={"classpath:/artists.xml"})
 public class ArtistFactoryIntegrationTest {
 	
-	
 	/*@Autowired
 	private ArtistAO artist; */
 	
