@@ -7,6 +7,7 @@ package de.mq.mapping.util.proxy;
  * @author Admin
  *
  */
+
 public interface BeanResolver {
 	
 	/**
