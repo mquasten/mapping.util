@@ -4,9 +4,6 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-
 import de.mq.mapping.util.proxy.BeanResolver;
 
 
