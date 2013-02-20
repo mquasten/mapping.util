@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 
 import de.mq.mapping.util.proxy.BeanResolver;
 
-@Component()
-@Profile({"CGLib-Proxy", "Dynamic-Proxy"})
+
 public class SimpleReflectionBeanResolverImpl implements BeanResolver{
 
 	private final  Map<Class<?>, Object> beans = new HashMap<>();
