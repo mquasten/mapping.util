@@ -8,16 +8,12 @@ import org.springframework.core.convert.converter.Converter;
 public class Enum2StringConverterTest {
 	
 	@Test
-	public final void conveter() {
+	public final void testConveter() {
+		
 		
 		final Converter<Enum<?>, String> converter = new Enum2StringConverter();
 		Assert.assertEquals(EnumMock.Constant.name(), converter.convert(EnumMock.Constant));
-	}
-	
-	@Test
-	public final void converterNullValue() {
-		final Converter<Enum<?>, String> converter = new Enum2StringConverter();
-		Assert.assertEquals("", converter.convert(null));
+		
 	}
 	
 	
