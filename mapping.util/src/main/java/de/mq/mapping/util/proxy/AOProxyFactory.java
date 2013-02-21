@@ -16,7 +16,6 @@ package de.mq.mapping.util.proxy;
 public interface AOProxyFactory {
 	
     
-	
 	/**
 	 * Creates a proxy for the given class and the given Repository
 	 * @param targetClass the class for which the proxy should be created
