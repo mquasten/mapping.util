@@ -4,6 +4,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
 import de.mq.mapping.util.proxy.AOProxyFactory;
 import de.mq.mapping.util.proxy.ModelRepository;
 
@@ -22,7 +25,8 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import net.sf.cglib.proxy.NoOp;
 
-
+@Component
+@Profile({"CGLib-Proxy"})
 public class BeanConventionCGLIBProxyFactory  extends AbstractBeanConventionProxyFactory{
 
 	private Map<Class<?>, Factory> proxies = new HashMap<Class<?>, Factory>();

@@ -4,15 +4,17 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
 import de.mq.mapping.util.proxy.AOProxyFactory;
 import de.mq.mapping.util.proxy.ModelRepository;
 
 
-
+@Component
+@Profile({"Dynamic-Proxy"})
 public class BeanConventionDynamicProxyFactory extends AbstractBeanConventionProxyFactory {
 
-	
-	
 	@SuppressWarnings("unchecked")
 	@Override()
 	public final <Web> Web createProxy(final Class<? extends Web> targetClass, final  ModelRepository modelRepository) {
