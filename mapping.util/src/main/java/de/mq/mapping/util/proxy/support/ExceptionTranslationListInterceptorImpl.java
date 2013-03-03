@@ -20,7 +20,7 @@ public class ExceptionTranslationListInterceptorImpl implements Interceptor {
 	public Object invoke(final Method method, final Object[] args) throws Throwable {
 		
 		try {
-		
+		   method.setAccessible(true);
 		   return method.invoke(modelRepository.get( method.getAnnotation(ExceptionTranslations.class).clazz()), args);
 		} catch(final InvocationTargetException  ex ) {
 			
