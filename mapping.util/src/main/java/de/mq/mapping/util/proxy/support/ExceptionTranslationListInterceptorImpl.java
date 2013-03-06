@@ -36,7 +36,7 @@ public class ExceptionTranslationListInterceptorImpl implements Interceptor {
 		for(final ExceptionTranslation exceptionTranslation : method.getAnnotation(ExceptionTranslations.class).value()) {
 			
 			    if (exceptionTranslation.source().isInstance(ex.getCause())) {
-			       return action(exceptionTranslation).execute(exceptionTranslation, modelRepository, ex, args );
+			       return action(exceptionTranslation).execute(exceptionTranslation, modelRepository, ex.getCause(), args );
 			    }
 			   
 		}
