@@ -24,7 +24,7 @@ public class ExceptionTranslationListInterceptorImpl implements Interceptor {
 		   return method.invoke(modelRepository.get( method.getAnnotation(ExceptionTranslations.class).clazz()), args);
 		} catch(final InvocationTargetException  ex ) {
 			
-		    return handleTranslation(method,  ex);
+		    return handleTranslation(method,  ex, args);
 			
 			
 			
@@ -32,11 +32,11 @@ public class ExceptionTranslationListInterceptorImpl implements Interceptor {
 		
 	}
 
-	private Object handleTranslation(final Method method, final Throwable ex) throws Throwable {
+	private Object handleTranslation(final Method method, final Throwable ex, final Object args[]) throws Throwable {
 		for(final ExceptionTranslation exceptionTranslation : method.getAnnotation(ExceptionTranslations.class).value()) {
 			
 			    if (exceptionTranslation.source().isInstance(ex.getCause())) {
-			       return action(exceptionTranslation).execute(exceptionTranslation.result(), exceptionTranslation.bundle(), modelRepository);
+			       return action(exceptionTranslation).execute(exceptionTranslation, modelRepository, ex, args );
 			    }
 			   
 		}
