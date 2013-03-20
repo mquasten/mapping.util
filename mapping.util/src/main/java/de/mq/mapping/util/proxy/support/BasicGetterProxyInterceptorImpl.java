@@ -18,7 +18,6 @@ class BasicGetterProxyInterceptorImpl implements Interceptor {
 	}
 
 	
-	
 	@SuppressWarnings({ "unchecked" })
 	public final Object invoke(final Method method, final Object[] args) throws Throwable {
 		annotationAwareGuard(method);
