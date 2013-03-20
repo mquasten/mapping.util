@@ -23,5 +23,4 @@ public interface BeanResolver {
 	 * @param bean the instance of the bean for the related type
 	 */
 	void put(final Class<?> clazz, final Object bean);
-
 }
