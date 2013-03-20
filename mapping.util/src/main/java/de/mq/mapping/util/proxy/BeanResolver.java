@@ -17,7 +17,6 @@ public interface BeanResolver {
 	 */
 	<T> T getBeanOfType(Class<? extends T> clazz);
 	
-	
 	/**
 	 * Add or replace bean for the given type.
 	 * @param clazz the type that is used, to resolve the bean
