@@ -1,5 +1,7 @@
 package de.mq.mapping.util.proxy.support;
 
+import java.util.UUID;
+
 
   
 	
@@ -35,6 +37,11 @@ package de.mq.mapping.util.proxy.support;
 	KeyImpl(final String name){
 		this.keyType=KeyType.Map;
 		this.name=name;
+	}
+	
+	KeyImpl(final UUID uuid){
+		this.keyType=KeyType.Cache;
+		this.name=uuid.toString();
 	}
 	
 	KeyImpl(final Class<?> clazz, final String name){

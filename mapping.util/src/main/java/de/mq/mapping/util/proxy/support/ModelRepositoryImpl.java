@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.util.ReflectionUtils;
@@ -220,6 +221,27 @@ class ModelRepositoryImpl implements ModelRepository {
 	@Override
 	public BeanResolver beanResolver() {
 		return this.beanResolver;
+	}
+
+
+
+	@Override
+	public void put(final UUID uuid, Object value) {
+		modelItems.put(new KeyImpl(uuid), value);
+	}
+
+
+
+	@Override
+	public Object get(final UUID uuid) {
+		return modelItems.get(new KeyImpl(uuid));
+	}
+
+
+
+	@Override
+	public boolean isCached(final UUID uuid) {
+		return modelItems.containsKey(new KeyImpl(uuid));
 	}
 
 	

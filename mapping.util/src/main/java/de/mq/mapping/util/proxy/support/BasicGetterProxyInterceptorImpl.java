@@ -1,6 +1,7 @@
 package de.mq.mapping.util.proxy.support;
 
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 import org.springframework.core.convert.converter.Converter;
 
@@ -30,8 +31,23 @@ class BasicGetterProxyInterceptorImpl implements Interceptor {
 		
 		
 		value=((Converter<Object, Object>) modelRepository.beanResolver().getBeanOfType(method.getAnnotation(GetterProxy.class).converter())).convert(value);
+	
+
+		
+		final UUID uuid =UUID.nameUUIDFromBytes(method.getAnnotation(GetterProxy.class).name().getBytes());
+		
+		if( modelRepository.isCached(uuid)) {
+			return modelRepository.get(uuid);
+		}
+		
+		
+	    final Object result =  factory.createProxy(proxyClass(method.getAnnotation(GetterProxy.class).proxyClass(), value), new ModelRepositoryImpl(modelRepository.beanResolver(), value));
 	 
-	    return factory.createProxy(proxyClass(method.getAnnotation(GetterProxy.class).proxyClass(), value), new ModelRepositoryImpl(modelRepository.beanResolver(), value));
+	  
+	    modelRepository.put(uuid, result);
+	
+	    
+	    return result; 
 	}
 	
 	

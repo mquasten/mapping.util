@@ -242,7 +242,7 @@ public class BeanConventionCglibProxyFactoryTest {
 		}
 
 		Assert.assertTrue((new Date().getTime() - t1) < 5e3);
-		System.out.println(new Date().getTime() - t1);
+		
 	}
 
 }
