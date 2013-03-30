@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.core.convert.converter.Converter;
 
@@ -41,13 +42,24 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 	public final  Object invoke(final Method method, final Object[] args) throws Throwable {
 		methodAnnotationGuard(method);
 		
+		
+		
 		final Collection<Object> results = method.getAnnotation(GetterProxyCollection.class).collectionClass().newInstance();
 		
 		final Object value = modelRepository.get(method.getAnnotation(GetterProxyCollection.class).clazz(), method.getAnnotation(GetterProxyCollection.class).name());
 		
+		final UUID uuid =UUID.nameUUIDFromBytes(method.getAnnotation(GetterProxyCollection.class).name().getBytes());
+		
+		
+		if( modelRepository.isCached(uuid, value)) {
+			return modelRepository.get(uuid);
+		}
+		
+		
 		final AOProxyFactory factory=modelRepository.beanResolver().getBeanOfType(AOProxyFactory.class);
 		
 		if( value == null ){
+			modelRepository.put(uuid, results);
 			return results;
 		}
 		
@@ -65,7 +77,7 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 		
 
 		if (method.getAnnotation(GetterProxyCollection.class).comparator().equals(GetterProxyCollection.NoComparator.class)){
-			
+			modelRepository.put(uuid, results);
 			return results;	
 		}
 		
@@ -75,6 +87,7 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 		final Comparator<Object> comparator =  (Comparator<Object>) modelRepository.beanResolver().getBeanOfType(method.getAnnotation(GetterProxyCollection.class).comparator());
 		
 		Collections.sort((List<?>) results, comparator);
+		modelRepository.put(uuid, results);
 		return results;
 	}
 
