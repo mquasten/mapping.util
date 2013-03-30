@@ -22,6 +22,10 @@ class BasicGetterProxyInterceptorImpl implements Interceptor {
 	@SuppressWarnings({ "unchecked" })
 	public final Object invoke(final Method method, final Object[] args) throws Throwable {
 		annotationAwareGuard(method);
+		final UUID uuid =UUID.nameUUIDFromBytes(method.getAnnotation(GetterProxy.class).name().getBytes());
+		if( modelRepository.isCached(uuid, null)) {
+			return modelRepository.get(uuid);
+		}
 		final AOProxyFactory factory = modelRepository.beanResolver().getBeanOfType(AOProxyFactory.class);
 		Object value = modelRepository.get(method.getAnnotation(GetterProxy.class).clazz(), method.getAnnotation(GetterProxy.class).name());
 		
@@ -34,11 +38,9 @@ class BasicGetterProxyInterceptorImpl implements Interceptor {
 	
 
 		
-		final UUID uuid =UUID.nameUUIDFromBytes(method.getAnnotation(GetterProxy.class).name().getBytes());
 		
-		if( modelRepository.isCached(uuid)) {
-			return modelRepository.get(uuid);
-		}
+		
+		
 		
 		
 	    final Object result =  factory.createProxy(proxyClass(method.getAnnotation(GetterProxy.class).proxyClass(), value), new ModelRepositoryImpl(modelRepository.beanResolver(), value));

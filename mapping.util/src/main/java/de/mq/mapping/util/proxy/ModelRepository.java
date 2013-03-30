@@ -79,9 +79,11 @@ public interface ModelRepository {
 	/**
 	 * Is a value stored or the given UUID for the Proxy or the Collection
 	 * @param uuid the unique id of the Proxy or the collection
-	 * @return true id a value is stored, else null
+	 * @param domainCollection for a collection the size of the cached collection must be identical, 
+	 *        otherwise it is not use able. It is removed from cache
+	 * @return true if a value is stored, else null
 	 */
-	boolean isCached(final UUID uuid); 
+	boolean isCached(final UUID uuid, final Object domainCollection ); 
 	
 	/**
 	 * The beanResolber, strategy how beens will be gotten, string, reflection, whatever

@@ -1,6 +1,7 @@
 package de.mq.mapping.util.proxy.support;
 
 import java.util.Date;
+import java.util.UUID;
 
 import junit.framework.Assert;
 
@@ -103,5 +104,15 @@ public class KeyTest {
 			Assert.assertEquals(keyType, KeyType.valueOf(keyType.name()));
 		}
 	}
+	
+	@Test
+	public final void testCacheKeyConstructor() {
+		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
+		final Key key = new KeyImpl(uuid);
+		Assert.assertEquals(uuid.toString(), key.name());
+		Assert.assertEquals(KeyType.Cache, ReflectionTestUtils.getField(key, "keyType"));
+	}
+	
+	
 
 }

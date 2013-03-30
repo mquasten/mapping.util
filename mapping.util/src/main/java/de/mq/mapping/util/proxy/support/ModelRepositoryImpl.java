@@ -1,6 +1,7 @@
 package de.mq.mapping.util.proxy.support;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -240,8 +241,30 @@ class ModelRepositoryImpl implements ModelRepository {
 
 
 	@Override
-	public boolean isCached(final UUID uuid) {
-		return modelItems.containsKey(new KeyImpl(uuid));
+	public boolean isCached(final UUID uuid, final Object domainCollection) {
+		
+		
+		clearCacheIfNeeded(uuid, domainCollection);
+		return  modelItems.containsKey(new KeyImpl(uuid));
+	}
+
+
+
+	private void clearCacheIfNeeded(final UUID uuid, final Object domainCollection) {
+		
+		if (!(domainCollection instanceof Collection)) {
+			return; 
+		}
+		
+		if (!(get(uuid) instanceof Collection)) {
+			modelItems.remove(new KeyImpl(uuid));
+			return;
+		}
+			
+		if (((Collection<?>) get(uuid)).size()!=((Collection<?>)domainCollection).size() ) {
+				modelItems.remove(new KeyImpl(uuid));
+		}
+		
 	}
 
 	

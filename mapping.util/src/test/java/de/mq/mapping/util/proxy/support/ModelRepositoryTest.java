@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import junit.framework.Assert;
 
@@ -24,6 +25,7 @@ import de.mq.mapping.util.proxy.model.Artist;
 import de.mq.mapping.util.proxy.model.ArtistImpl;
 import de.mq.mapping.util.proxy.model.ProfileAO;
 import de.mq.mapping.util.proxy.model.String2IntegerConverter;
+
 
 public class ModelRepositoryTest {
 	
@@ -362,11 +364,7 @@ public class ModelRepositoryTest {
 		modelRepository.get(ArtistImpl.class, "dontLetMeGetMe");
 	}
 	
-/*	
-	@Test(expected=IllegalStateException.class)
-	public final void testErrorCreateDomainObject() {
-		new ModelRepositoryImpl(WebMock.class);
-	} */
+
 	
 	@Test
 	public final void testNoModel() {
@@ -378,6 +376,51 @@ public class ModelRepositoryTest {
 		final ModelRepository modelRepository = new ModelRepositoryImpl(beanResolver);
 		modelRepository.put(new ArtistImpl("Kylie"));
 		Assert.assertEquals(HashMap.class, modelRepository.get(NoModel.class).getClass());
+	}
+	
+	
+	@Test
+	public final void testPutCache() {
+		final ModelRepository modelRepository = new ModelRepositoryImpl(beanResolver);
+		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
+		final WebMock artistAO = Mockito.mock(WebMock.class);
+		modelRepository.put(uuid, artistAO);
+		@SuppressWarnings("unchecked")
+		final Map<Key, Object> items =   (Map<Key, Object>) ReflectionTestUtils.getField(modelRepository, "modelItems");
+		Assert.assertEquals(1, items.size());
+		Assert.assertEquals(new KeyImpl(uuid), items.keySet().iterator().next());
+		Assert.assertEquals(artistAO, items.values().iterator().next());
+	}
+	
+	@Test
+	public final void testGetCache() {
+		final WebMock artistAO = Mockito.mock(WebMock.class);
+		
+		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
+		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(artistAO, uuid);
+		
+		Assert.assertEquals(artistAO, modelRepository.get(uuid));
+		
+	}
+	
+	@Test
+	public final void testIsCache() {
+		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
+		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(Mockito.mock(WebMock.class), uuid);
+		System.out.println( modelRepository.isCached(uuid, null));
+		//Assert.assertTrue( modelRepository.isCached(uuid, null));
+	}
+
+
+	private ModelRepository prepareModelRepositoryWithCachedItem(final WebMock artistAO, final UUID uuid) {
+		final ModelRepository modelRepository = new ModelRepositoryImpl(beanResolver);
+		
+		
+		@SuppressWarnings("unchecked")
+		final Map<Key, Object> items =   (Map<Key, Object>) ReflectionTestUtils.getField(modelRepository, "modelItems");
+		
+		items.put(new KeyImpl(uuid), artistAO);
+		return modelRepository;
 	}
 	
 }
