@@ -1,9 +1,11 @@
 package de.mq.mapping.util.proxy.support;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -407,12 +409,50 @@ public class ModelRepositoryTest {
 	public final void testIsCache() {
 		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
 		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(Mockito.mock(WebMock.class), uuid);
-		System.out.println( modelRepository.isCached(uuid, null));
-		//Assert.assertTrue( modelRepository.isCached(uuid, null));
+		Assert.assertTrue( modelRepository.isCached(uuid, null));
+		Assert.assertTrue(!modelItemsIsEmpty(modelRepository));
+	}
+	
+	
+	@Test
+	public final void testIsCachedWrongStroredValue() {
+		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
+		final List<WebMock> collection = new ArrayList<>();
+		collection.add(Mockito.mock(WebMock.class));
+		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(Mockito.mock(WebMock.class), uuid);
+		Assert.assertFalse(modelRepository.isCached(uuid, collection));
+		
+		Assert.assertTrue(modelItemsIsEmpty(modelRepository));
 	}
 
+	@SuppressWarnings("unchecked")
+	private boolean modelItemsIsEmpty(final ModelRepository modelRepository) {
+		return ((Map<Key, Object>) ReflectionTestUtils.getField(modelRepository, "modelItems")).isEmpty();
+	}
+	
+	@Test
+	public final void testIsCachedWrongCollectionSize(){
+		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
+		final List<WebMock> collection = new ArrayList<>();
+		collection.add(Mockito.mock(WebMock.class));
+		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(collection, uuid);
+		final List<WebMock> webmocks = new ArrayList<>(collection);
+		webmocks.add(Mockito.mock(WebMock.class));
+		Assert.assertFalse(modelRepository.isCached(uuid, webmocks));
+		Assert.assertTrue(modelItemsIsEmpty(modelRepository));
+	}
 
-	private ModelRepository prepareModelRepositoryWithCachedItem(final WebMock artistAO, final UUID uuid) {
+	@Test
+	public final void testIsCachedCollection() {
+		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
+		final List<WebMock> collection = new ArrayList<>();
+		collection.add(Mockito.mock(WebMock.class));
+		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(collection, uuid);
+		Assert.assertTrue(modelRepository.isCached(uuid, new ArrayList<>(collection)));
+		Assert.assertFalse(modelItemsIsEmpty(modelRepository));
+	}
+
+	private ModelRepository prepareModelRepositoryWithCachedItem(final Object artistAO, final UUID uuid) {
 		final ModelRepository modelRepository = new ModelRepositoryImpl(beanResolver);
 		
 		
