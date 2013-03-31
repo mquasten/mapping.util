@@ -99,5 +99,11 @@ public interface ModelRepository {
 	 * @param domainClasses all items , the domainClass and all its fields, errors and proxies will be removed
 	 */
     void clear(final Class<?> ... domainClasses);
+    
+    /**
+     * Remove the temporary field with the given name  from repository
+     * @param field then name of the field, that should be removed
+     */
+    void clear(final String field);
 
 }

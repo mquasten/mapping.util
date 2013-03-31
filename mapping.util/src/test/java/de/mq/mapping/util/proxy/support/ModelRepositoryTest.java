@@ -506,6 +506,19 @@ public class ModelRepositoryTest {
 		
 	}
 	
+	@Test
+	public final void testclearMapValue() {
+		final ModelRepository modelRepository = new ModelRepositoryImpl(beanResolver);
+		@SuppressWarnings("unchecked")
+		Map<String,Object> modelItems = Mockito.mock(Map.class);
+		ReflectionTestUtils.setField(modelRepository, "modelItems", modelItems);
+		final String key = "bornThisWay";
+		modelRepository.clear(key);
+		Mockito.verify(modelItems).remove(new KeyImpl(key));
+		
+		
+	}
+	
 }
 
 

@@ -103,6 +103,9 @@ class ModelRepositoryImpl implements ModelRepository {
 		}
 	}
 	
+	public final void clear(final String field) {
+		modelItems.remove(new KeyImpl(field));
+	}
 	
 	private void addParent(final Class<?> clazz, final Object value) {
 		if (value instanceof Map<?,?>) {
