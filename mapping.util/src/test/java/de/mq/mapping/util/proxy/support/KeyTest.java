@@ -108,8 +108,8 @@ public class KeyTest {
 	@Test
 	public final void testCacheKeyConstructor() {
 		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
-		final Key key = new KeyImpl(uuid);
-		Assert.assertEquals(uuid.toString(), key.name());
+		final Key key = new KeyImpl(ArtistImpl.class, uuid);
+		Assert.assertEquals(ArtistImpl.class.getName()+ "." + uuid.toString(), key.name());
 		Assert.assertEquals(KeyType.Cache, ReflectionTestUtils.getField(key, "keyType"));
 	}
 	

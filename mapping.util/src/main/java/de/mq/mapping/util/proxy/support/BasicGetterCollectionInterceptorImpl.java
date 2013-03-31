@@ -51,15 +51,15 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 		final UUID uuid =UUID.nameUUIDFromBytes(method.getAnnotation(GetterProxyCollection.class).name().getBytes());
 		
 		
-		if( modelRepository.isCached(uuid, value)) {
-			return modelRepository.get(uuid);
+		if( modelRepository.isCached(method.getAnnotation(GetterProxyCollection.class).clazz(), uuid, value)) {
+			return modelRepository.get(method.getAnnotation(GetterProxyCollection.class).clazz(), uuid);
 		}
 		
 		
 		final AOProxyFactory factory=modelRepository.beanResolver().getBeanOfType(AOProxyFactory.class);
 		
 		if( value == null ){
-			modelRepository.put(uuid, results);
+			modelRepository.put(method.getAnnotation(GetterProxyCollection.class).clazz(), uuid, results);
 			return results;
 		}
 		
@@ -77,7 +77,7 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 		
 
 		if (method.getAnnotation(GetterProxyCollection.class).comparator().equals(GetterProxyCollection.NoComparator.class)){
-			modelRepository.put(uuid, results);
+			modelRepository.put(method.getAnnotation(GetterProxyCollection.class).clazz(), uuid, results);
 			return results;	
 		}
 		
@@ -87,7 +87,7 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 		final Comparator<Object> comparator =  (Comparator<Object>) modelRepository.beanResolver().getBeanOfType(method.getAnnotation(GetterProxyCollection.class).comparator());
 		
 		Collections.sort((List<?>) results, comparator);
-		modelRepository.put(uuid, results);
+		modelRepository.put(method.getAnnotation(GetterProxyCollection.class).clazz(), uuid, results);
 		return results;
 	}
 

@@ -23,8 +23,8 @@ class BasicGetterProxyInterceptorImpl implements Interceptor {
 	public final Object invoke(final Method method, final Object[] args) throws Throwable {
 		annotationAwareGuard(method);
 		final UUID uuid =UUID.nameUUIDFromBytes(method.getAnnotation(GetterProxy.class).name().getBytes());
-		if( modelRepository.isCached(uuid, null)) {
-			return modelRepository.get(uuid);
+		if( modelRepository.isCached(method.getAnnotation(GetterProxy.class).clazz(), uuid, null)) {
+			return modelRepository.get(method.getAnnotation(GetterProxy.class).clazz(), uuid);
 		}
 		final AOProxyFactory factory = modelRepository.beanResolver().getBeanOfType(AOProxyFactory.class);
 		Object value = modelRepository.get(method.getAnnotation(GetterProxy.class).clazz(), method.getAnnotation(GetterProxy.class).name());
@@ -46,7 +46,7 @@ class BasicGetterProxyInterceptorImpl implements Interceptor {
 	    final Object result =  factory.createProxy(proxyClass(method.getAnnotation(GetterProxy.class).proxyClass(), value), new ModelRepositoryImpl(modelRepository.beanResolver(), value));
 	 
 	  
-	    modelRepository.put(uuid, result);
+	    modelRepository.put(method.getAnnotation(GetterProxy.class).clazz(), uuid, result);
 	
 	    
 	    return result; 

@@ -92,7 +92,16 @@ class ModelRepositoryImpl implements ModelRepository {
 	}
 
 	
-	
+	public final void clear(final Class<?> ... domainClasses) {
+		if(domainClasses.length==0){
+			modelItems.clear();
+			return;
+		}
+		for(final Class<?> clazz : domainClasses){
+			deleteChilds(clazz);
+			modelItems.remove(new KeyImpl(clazz));
+		}
+	}
 	
 	
 	private void addParent(final Class<?> clazz, final Object value) {
@@ -110,6 +119,8 @@ class ModelRepositoryImpl implements ModelRepository {
 			modelItems.put(new KeyImpl(entry.getKey()), entry.getValue());
 		}
 	}
+	
+	
 
 	void deleteChilds(final Class<?> clazz) {
 		for(final Key key : childKeys(clazz)) {
@@ -139,7 +150,7 @@ class ModelRepositoryImpl implements ModelRepository {
 	 * @see de.mq.util.proxy.support.ModelRepository#get(java.lang.Class)
 	 */
 	public final Object get(final Class<?> clazz) {
-		return get(clazz,null);
+		return get(clazz,(String) null);
 	}
 	
 	/* (non-Javadoc)
@@ -227,42 +238,42 @@ class ModelRepositoryImpl implements ModelRepository {
 
 
 	@Override
-	public void put(final UUID uuid, Object value) {
-		modelItems.put(new KeyImpl(uuid), value);
+	public void put(Class<?> clazz,final UUID uuid, Object value) {
+		modelItems.put(new KeyImpl(clazz, uuid), value);
 	}
 
 
 
 	@Override
-	public Object get(final UUID uuid) {
-		return modelItems.get(new KeyImpl(uuid));
+	public Object get(Class<?> clazz, final UUID uuid) {
+		return modelItems.get( new KeyImpl(clazz, uuid));
 	}
 
 
 
 	@Override
-	public boolean isCached(final UUID uuid, final Object domainCollection) {
+	public boolean isCached(Class<?> clazz, final UUID uuid, final Object domainCollection) {
 		
 		
-		clearCacheIfNeeded(uuid, domainCollection);
-		return  modelItems.containsKey(new KeyImpl(uuid));
+		clearCacheIfNeeded(clazz, uuid, domainCollection);
+		return  modelItems.containsKey(new KeyImpl(clazz, uuid));
 	}
 
 
 
-	private void clearCacheIfNeeded(final UUID uuid, final Object domainCollection) {
+	private void clearCacheIfNeeded(Class<?> clazz, final UUID uuid, final Object domainCollection) {
 		
 		if (!(domainCollection instanceof Collection)) {
 			return; 
 		}
 		
-		if (!(get(uuid) instanceof Collection)) {
-			modelItems.remove(new KeyImpl(uuid));
+		if (!(get(clazz, uuid) instanceof Collection)) {
+			modelItems.remove(new KeyImpl(clazz, uuid));
 			return;
 		}
 			
-		if (((Collection<?>) get(uuid)).size()!=((Collection<?>)domainCollection).size() ) {
-				modelItems.remove(new KeyImpl(uuid));
+		if (((Collection<?>) get(clazz, uuid)).size()!=((Collection<?>)domainCollection).size() ) {
+				modelItems.remove(new KeyImpl(clazz, uuid));
 		}
 		
 	}

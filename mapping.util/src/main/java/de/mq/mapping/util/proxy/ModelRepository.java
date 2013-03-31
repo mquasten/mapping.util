@@ -30,10 +30,11 @@ public interface ModelRepository {
 
 	/**
 	 * Put a value to the cache. Proxies or collections of Proxies must be cached, that the temporary values will not be lost
+	 * @param clazz thedomainClass where the cached vales hanged up 
 	 * @param uuid the unique id for the proxy  or the collection
 	 * @param value the value that should be stored
 	 */
-	void put(final UUID uuid, final Object value);
+	void put(final Class<?> clazz, final UUID uuid, final Object value);
 	
 	/**
 	 * Gets a stored domainObject from the repository
@@ -63,10 +64,11 @@ public interface ModelRepository {
 	Object get(final Class<?> clazz, final String name,  @SuppressWarnings("rawtypes") final Class<? extends Converter>  converter, final Class<?> resultType );
 	/**
 	 * Get the value for a stored proxy or a stored Collection of proxies
+	 * @param clazz thedomainClass where the cached vales hanged up 
 	 * @param uuid the unique id of the stored proxy / collection
 	 * @return the value that is stored
 	 */
-	Object get(final UUID uuid);
+	Object get(final Class<?> clazz, final UUID uuid);
 	
 	/**
 	 * Exists an error for the field, for example, because the Type for the field wrong
@@ -77,18 +79,25 @@ public interface ModelRepository {
 	boolean hasError(final Class<?> clazz, final String field);
 	
 	/**
-	 * Is a value stored or the given UUID for the Proxy or the Collection
+	 * Is a value stored or the given UUID for the Proxy or the Collection from the DomainOjectClass
+	 * @param clazz the domainClass where the cached vales hanged up 
 	 * @param uuid the unique id of the Proxy or the collection
 	 * @param domainCollection for a collection the size of the cached collection must be identical, 
 	 *        otherwise it is not use able. It is removed from cache
 	 * @return true if a value is stored, else null
 	 */
-	boolean isCached(final UUID uuid, final Object domainCollection ); 
+	boolean isCached(final Class<?> clazz, final UUID uuid, final Object domainCollection ); 
 	
 	/**
 	 * The beanResolber, strategy how beens will be gotten, string, reflection, whatever
 	 * @return the Resolver Interface, for beans
 	 */
 	BeanResolver beanResolver();
+	
+	/**
+	 * Clear the Repository or clear part of it.  If no class is given the complete repository is removed
+	 * @param domainClasses all items , the domainClass and all its fields, errors and proxies will be removed
+	 */
+    void clear(final Class<?> ... domainClasses);
 
 }

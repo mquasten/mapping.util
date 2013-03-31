@@ -39,9 +39,9 @@ import java.util.UUID;
 		this.name=name;
 	}
 	
-	KeyImpl(final UUID uuid){
+	KeyImpl(final Class<?> clazz, final UUID uuid){
 		this.keyType=KeyType.Cache;
-		this.name=uuid.toString();
+		this.name=clazz.getName() +"." +uuid.toString();
 	}
 	
 	KeyImpl(final Class<?> clazz, final String name){

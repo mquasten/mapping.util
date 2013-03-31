@@ -72,5 +72,8 @@ public class ModelRepositoryBuilderTest {
 		final ModelRepository modelRepository = new ModelRepositoryBuilderImpl().withBeanResolver(Mockito.mock(BeanResolver.class)).withDomain(artist).build();
 		Assert.assertEquals(artist, modelRepository.get(artist.getClass()));
 	}
+    
+    
+    
 
 }

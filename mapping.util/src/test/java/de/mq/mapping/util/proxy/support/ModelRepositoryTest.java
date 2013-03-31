@@ -386,11 +386,12 @@ public class ModelRepositoryTest {
 		final ModelRepository modelRepository = new ModelRepositoryImpl(beanResolver);
 		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
 		final WebMock artistAO = Mockito.mock(WebMock.class);
-		modelRepository.put(uuid, artistAO);
+		
+		modelRepository.put(ArtistImpl.class, uuid, artistAO);
 		@SuppressWarnings("unchecked")
 		final Map<Key, Object> items =   (Map<Key, Object>) ReflectionTestUtils.getField(modelRepository, "modelItems");
 		Assert.assertEquals(1, items.size());
-		Assert.assertEquals(new KeyImpl(uuid), items.keySet().iterator().next());
+		Assert.assertEquals(new KeyImpl(ArtistImpl.class, uuid), items.keySet().iterator().next());
 		Assert.assertEquals(artistAO, items.values().iterator().next());
 	}
 	
@@ -401,7 +402,7 @@ public class ModelRepositoryTest {
 		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
 		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(artistAO, uuid);
 		
-		Assert.assertEquals(artistAO, modelRepository.get(uuid));
+		Assert.assertEquals(artistAO, modelRepository.get(ArtistImpl.class, uuid));
 		
 	}
 	
@@ -409,7 +410,7 @@ public class ModelRepositoryTest {
 	public final void testIsCache() {
 		final UUID uuid = UUID.nameUUIDFromBytes("artist".getBytes());
 		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(Mockito.mock(WebMock.class), uuid);
-		Assert.assertTrue( modelRepository.isCached(uuid, null));
+		Assert.assertTrue( modelRepository.isCached(ArtistImpl.class, uuid, null));
 		Assert.assertTrue(!modelItemsIsEmpty(modelRepository));
 	}
 	
@@ -420,7 +421,7 @@ public class ModelRepositoryTest {
 		final List<WebMock> collection = new ArrayList<>();
 		collection.add(Mockito.mock(WebMock.class));
 		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(Mockito.mock(WebMock.class), uuid);
-		Assert.assertFalse(modelRepository.isCached(uuid, collection));
+		Assert.assertFalse(modelRepository.isCached(ArtistImpl.class, uuid, collection));
 		
 		Assert.assertTrue(modelItemsIsEmpty(modelRepository));
 	}
@@ -438,7 +439,7 @@ public class ModelRepositoryTest {
 		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(collection, uuid);
 		final List<WebMock> webmocks = new ArrayList<>(collection);
 		webmocks.add(Mockito.mock(WebMock.class));
-		Assert.assertFalse(modelRepository.isCached(uuid, webmocks));
+		Assert.assertFalse(modelRepository.isCached(ArtistImpl.class, uuid, webmocks));
 		Assert.assertTrue(modelItemsIsEmpty(modelRepository));
 	}
 
@@ -448,7 +449,7 @@ public class ModelRepositoryTest {
 		final List<WebMock> collection = new ArrayList<>();
 		collection.add(Mockito.mock(WebMock.class));
 		final ModelRepository modelRepository = prepareModelRepositoryWithCachedItem(collection, uuid);
-		Assert.assertTrue(modelRepository.isCached(uuid, new ArrayList<>(collection)));
+		Assert.assertTrue(modelRepository.isCached(ArtistImpl.class, uuid, new ArrayList<>(collection)));
 		Assert.assertFalse(modelItemsIsEmpty(modelRepository));
 	}
 
@@ -459,8 +460,50 @@ public class ModelRepositoryTest {
 		@SuppressWarnings("unchecked")
 		final Map<Key, Object> items =   (Map<Key, Object>) ReflectionTestUtils.getField(modelRepository, "modelItems");
 		
-		items.put(new KeyImpl(uuid), artistAO);
+		items.put(new KeyImpl(ArtistImpl.class, uuid), artistAO);
 		return modelRepository;
+	}
+	
+	
+	@Test
+	public final void testClearDomainObject() {
+		final Map<String,Object> temporaries = new HashMap<>();
+		final Date birthdate = new GregorianCalendar(1968 , 4, 28).getTime();
+		temporaries.put("birthDate", birthdate);
+		final Artist artist = new ArtistImpl("Kylie");;
+		final ModelRepository modelRepository = new ModelRepositoryImpl(beanResolver, temporaries, artist);
+		final Artist duetpartner = Mockito.mock(Artist.class);
+		
+		modelRepository.put(artist.getClass(), "id", "dontLetMeGetMe", NoConverter.class);
+		UUID uuidDuetPartner = UUID.nameUUIDFromBytes("duetPartner".getBytes());
+		modelRepository.put(artist.getClass(),uuidDuetPartner,duetpartner );
+		
+		
+		@SuppressWarnings("unchecked")
+		final Map<Key, Object> items =   (Map<Key, Object>) ReflectionTestUtils.getField(modelRepository, "modelItems");
+		
+		Assert.assertEquals(4, items.size());
+		Assert.assertTrue(items.keySet().contains(new KeyImpl(artist.getClass())));
+		Assert.assertTrue(items.keySet().contains(new KeyImpl(artist.getClass(), uuidDuetPartner)));
+		Assert.assertTrue(items.keySet().contains(new KeyImpl(artist.getClass(),"id" )));
+		Assert.assertTrue(items.keySet().contains(new KeyImpl("birthDate" )));
+		
+		modelRepository.clear(artist.getClass());
+		
+		Assert.assertEquals(1, items.size());
+		Assert.assertTrue(items.keySet().contains(new KeyImpl("birthDate" )));
+	}
+	
+	
+	@Test
+	public final void testClearAll() {
+		final ModelRepository modelRepository = new ModelRepositoryImpl(beanResolver);
+		@SuppressWarnings("unchecked")
+		Map<String,Object> modelItems = Mockito.mock(Map.class);
+		ReflectionTestUtils.setField(modelRepository, "modelItems", modelItems);
+		modelRepository.clear();
+		Mockito.verify(modelItems).clear();
+		
 	}
 	
 }
