@@ -66,9 +66,9 @@ class ModelRepositoryImpl implements ModelRepository {
 			return;
 		}
 		
-		
+		 modelItems.remove(new KeyImpl(clazz, UUID.nameUUIDFromBytes(field.getBytes())));
 		if (clazz.equals(NoModel.class)){
-			modelItems.put(new KeyImpl(field), value);
+			modelItems.put(new KeyImpl(field), beanResolver.getBeanOfType(converterClass).convert( value));
 			return;
 		}
 		
