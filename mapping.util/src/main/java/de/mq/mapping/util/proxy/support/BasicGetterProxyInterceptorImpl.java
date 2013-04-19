@@ -33,7 +33,6 @@ class BasicGetterProxyInterceptorImpl implements Interceptor {
 			return null;
 		}
 		
-		
 		value=((Converter<Object, Object>) modelRepository.beanResolver().getBeanOfType(method.getAnnotation(GetterProxy.class).converter())).convert(value);
 	
 
@@ -60,6 +59,7 @@ class BasicGetterProxyInterceptorImpl implements Interceptor {
 		if( ! Converter.class.isAssignableFrom(clazz)) {
 			return clazz;
 		}
+		
 		return  ((Converter<Object, Class<?>>) modelRepository.beanResolver().getBeanOfType(clazz)).convert(value);
 		
             

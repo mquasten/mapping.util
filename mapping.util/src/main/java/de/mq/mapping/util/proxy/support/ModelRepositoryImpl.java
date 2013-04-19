@@ -29,7 +29,6 @@ class ModelRepositoryImpl implements ModelRepository {
 		this.beanResolver=beanResolver;
 		
 		for(final Object obj : models){
-			
 			modelItems.put(new KeyImpl(obj.getClass()),   obj );
 		}
 			
@@ -199,7 +198,6 @@ class ModelRepositoryImpl implements ModelRepository {
 			if( resultType.isInstance(result)) {
 				return result;
 			}
-			
 			return beanResolver.getBeanOfType(converter).convert(result);
 		
 	} 
