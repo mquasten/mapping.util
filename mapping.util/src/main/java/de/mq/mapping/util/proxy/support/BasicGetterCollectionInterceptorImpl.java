@@ -93,11 +93,19 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 
 	@SuppressWarnings("unchecked")
 	private Converter<Object, Class<?>> proxyClass(final Class<?> clazz)  {
-		final Object result = modelRepository.beanResolver().getBeanOfType(clazz);
+		final Object  result = resolveConverter(clazz);
 		if (! (result instanceof Converter<?,?>)) {
 			 return null;
 		}
 		return (Converter<Object, Class<?>>) result;
+	}
+
+	private Object resolveConverter(final Class<?> clazz) {
+		try {
+		    return  modelRepository.beanResolver().getBeanOfType(clazz);
+		} catch ( Exception ex ){
+			return null;
+		}
 	} 
 
 	
