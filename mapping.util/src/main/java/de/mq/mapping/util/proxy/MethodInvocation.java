@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ExceptionTranslations {
+public @interface MethodInvocation {
 	
 	ExceptionTranslation[] value() default {}; 
 	

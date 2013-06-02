@@ -37,7 +37,7 @@ public class ExceptionTanslationListInterceptorTest {
 		Mockito.when(modelRepository.beanResolver()).thenReturn(beanResolver);
 		controller = new ArtistControllerImpl();
 		Mockito.when(modelRepository.get(ArtistControllerImpl.class)).thenReturn(controller);
-		interceptor = new ExceptionTranslationListInterceptorImpl(modelRepository);
+		interceptor = new MethodInvocationInterceptorImpl(modelRepository);
 		factory = Mockito.mock(AOProxyFactory.class);
 		Mockito.when(beanResolver.getBeanOfType(AOProxyFactory.class)).thenReturn(factory);
 		Mockito.when(factory.createProxy(ArtistAO.class, modelRepository)).thenReturn(artistAO);

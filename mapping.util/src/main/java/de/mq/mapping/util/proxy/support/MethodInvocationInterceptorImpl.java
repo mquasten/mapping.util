@@ -5,14 +5,14 @@ import java.lang.reflect.Method;
 
 import de.mq.mapping.util.proxy.Action;
 import de.mq.mapping.util.proxy.ExceptionTranslation;
-import de.mq.mapping.util.proxy.ExceptionTranslations;
+import de.mq.mapping.util.proxy.MethodInvocation;
 import de.mq.mapping.util.proxy.ModelRepository;
 
-public class ExceptionTranslationListInterceptorImpl implements Interceptor {
+public class MethodInvocationInterceptorImpl implements Interceptor {
 	
 	private final ModelRepository modelRepository;
 	
-	public ExceptionTranslationListInterceptorImpl(final ModelRepository modelRepository){
+	public MethodInvocationInterceptorImpl(final ModelRepository modelRepository){
 		this.modelRepository=modelRepository;
 	}
 
@@ -21,7 +21,7 @@ public class ExceptionTranslationListInterceptorImpl implements Interceptor {
 		
 		try {
 		   method.setAccessible(true);
-		   return method.invoke(modelRepository.get( method.getAnnotation(ExceptionTranslations.class).clazz()), args);
+		   return method.invoke(modelRepository.get( method.getAnnotation(MethodInvocation.class).clazz()), args);
 		} catch(final InvocationTargetException  ex ) {
 			
 		    return handleTranslation(method,  ex, args);
@@ -33,7 +33,7 @@ public class ExceptionTranslationListInterceptorImpl implements Interceptor {
 	}
 
 	private Object handleTranslation(final Method method, final Throwable ex, final Object args[]) throws Throwable {
-		for(final ExceptionTranslation exceptionTranslation : method.getAnnotation(ExceptionTranslations.class).value()) {
+		for(final ExceptionTranslation exceptionTranslation : method.getAnnotation(MethodInvocation.class).value()) {
 			
 			    if (exceptionTranslation.source().isInstance(ex.getCause())) {
 			       return action(exceptionTranslation).execute(exceptionTranslation, modelRepository, ex.getCause(), args );

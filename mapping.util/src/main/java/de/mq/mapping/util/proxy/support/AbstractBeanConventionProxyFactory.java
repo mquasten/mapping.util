@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.mq.mapping.util.proxy.AOProxyFactory;
-import de.mq.mapping.util.proxy.ExceptionTranslations;
+import de.mq.mapping.util.proxy.MethodInvocation;
 import de.mq.mapping.util.proxy.Getter;
 import de.mq.mapping.util.proxy.GetterDomain;
 import de.mq.mapping.util.proxy.GetterProxy;
@@ -23,7 +23,7 @@ abstract class AbstractBeanConventionProxyFactory implements AOProxyFactory {
 	
 	
 	@SuppressWarnings("unchecked")
-	private final Class<? extends Interceptor>[]  classes = new Class[] {BasicGetterInterceptorImpl.class,BasicGetterCollectionInterceptorImpl.class,BasicGetterProxyInterceptorImpl.class,DomainGetterInterceptorImpl.class,SetterInterceptorImpl.class,DomainSetterInterceptorImpl.class, ExceptionTranslationListInterceptorImpl.class };
+	private final Class<? extends Interceptor>[]  classes = new Class[] {BasicGetterInterceptorImpl.class,BasicGetterCollectionInterceptorImpl.class,BasicGetterProxyInterceptorImpl.class,DomainGetterInterceptorImpl.class,SetterInterceptorImpl.class,DomainSetterInterceptorImpl.class, MethodInvocationInterceptorImpl.class };
 	
 	@SuppressWarnings("unchecked")
 	protected AbstractBeanConventionProxyFactory() {
@@ -62,7 +62,7 @@ abstract class AbstractBeanConventionProxyFactory implements AOProxyFactory {
 		indexes.put(GetterDomain.class, 3);
 		indexes.put(Setter.class, 4);
 		indexes.put(SetterDomain.class, 5);
-		indexes.put(ExceptionTranslations.class, 6);
+		indexes.put(MethodInvocation.class, 6);
 	} 
 
 	
