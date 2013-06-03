@@ -5,14 +5,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface MethodInvocation {
-	
-	ExceptionTranslation[] value() default {}; 
+public @interface Parameter {
 	
 	Class<?> clazz() ;
 	
-	Parameter[] params() default {}; 
+	int originIndex() default -1; 
+	
 
 }
