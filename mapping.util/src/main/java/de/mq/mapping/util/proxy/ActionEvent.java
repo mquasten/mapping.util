@@ -6,13 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MethodInvocation {
+@Target(ElementType.ANNOTATION_TYPE)
+public  @interface ActionEvent {
 	
-	ExceptionTranslation[] value() default {}; 
+	Parameter[] params() default {};
 	
-	Class<?> clazz() ;
-	
-	ActionEvent[] actions() default {}; 
+	String name() default "";
 
 }

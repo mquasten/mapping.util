@@ -3,6 +3,7 @@ package de.mq.mapping.util.proxy.model;
 import org.mockito.Mockito;
 
 import de.mq.mapping.util.proxy.Action;
+import de.mq.mapping.util.proxy.ActionEvent;
 import de.mq.mapping.util.proxy.BeanResolver;
 import de.mq.mapping.util.proxy.ExceptionTranslation;
 import de.mq.mapping.util.proxy.MethodInvocation;
@@ -21,7 +22,8 @@ public class ArtistControllerImpl  implements ArtistController {
 	 * @see de.mq.mapping.util.proxy.model.ArtistController#artist(java.lang.Long)
 	 */
 	@Override
-	@MethodInvocation( clazz=ArtistControllerImpl.class, params={@Parameter(clazz=Long.class, originIndex=0)}, value={@ExceptionTranslation( source=IllegalArgumentException.class, action = ActionMock.class, bundle="artist_not_found" )})
+	
+	@MethodInvocation( clazz=ArtistControllerImpl.class, actions={@ActionEvent(params={@Parameter(clazz=Long.class, originIndex=0)})},  value={@ExceptionTranslation( source=IllegalArgumentException.class, action = ActionMock.class, bundle="artist_not_found" )})
 	public ArtistAO artist(final Long id )   {
 		final BeanResolver beanResolver = Mockito.mock(BeanResolver.class);
 		if( id < 0) {
@@ -39,12 +41,12 @@ public class ArtistControllerImpl  implements ArtistController {
 	}
 	
 
-	@MethodInvocation( clazz=ArtistControllerImpl.class,value={@ExceptionTranslation( source=IllegalArgumentException.class, action = Action.class, bundle="artist_not_found" )})
+	@MethodInvocation( clazz=ArtistControllerImpl.class, actions={@ActionEvent()},  value={@ExceptionTranslation( source=IllegalArgumentException.class, action = Action.class, bundle="artist_not_found" )})
 	public ArtistAO artist()   {
 		throw new IllegalArgumentException();
 	}
 	
-	@MethodInvocation( clazz=ArtistControllerImpl.class,value={@ExceptionTranslation( source=IllegalArgumentException.class, action = DoNothingActionMock.class, bundle="artist_not_found" )})
+	@MethodInvocation( clazz=ArtistControllerImpl.class,actions={@ActionEvent()} ,value={@ExceptionTranslation( source=IllegalArgumentException.class, action = DoNothingActionMock.class, bundle="artist_not_found" )})
 	public ArtistAO artistFacesMessage()   {
 		throw new IllegalArgumentException();
 	}

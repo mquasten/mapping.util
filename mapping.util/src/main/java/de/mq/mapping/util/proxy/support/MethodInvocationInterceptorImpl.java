@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mq.mapping.util.proxy.Action;
+import de.mq.mapping.util.proxy.ActionEvent;
 import de.mq.mapping.util.proxy.ExceptionTranslation;
 import de.mq.mapping.util.proxy.MethodInvocation;
 import de.mq.mapping.util.proxy.ModelRepository;
@@ -24,17 +25,22 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		annotationExistsGuard(method);
 		try {
 		   final Class<?> clazz =  method.getAnnotation(MethodInvocation.class).clazz();
-		   final List<Class<?>> paramClasses = new ArrayList<>();
-		   final List<Object> paramValues = new ArrayList<>();
-		   for(final Parameter parameter : method.getAnnotation(MethodInvocation.class).params()){
-			   paramClasses.add(parameter.clazz());
-			   handleParameterValue(args, paramValues, parameter);
+		   
+		   Object result=null; 
+		   boolean likeAVirgin=true;
+		   for(final ActionEvent action : method.getAnnotation(MethodInvocation.class).actions()){
+			   final Object methodResult = handleActionEvent(method, args, clazz, action);
+			   if( methodResult != null){
+				   result=methodResult;
+			   }
+			   likeAVirgin=false;
 		   }
 		   
-		   final Method targetMethod = clazz.getMethod(method.getName(), paramClasses.toArray(new Class[paramClasses.size()]));
-		   
-		   targetMethodExistsGuard(targetMethod);
-		   return targetMethod.invoke(modelRepository.get(clazz), paramValues.toArray(new Object[paramValues.size()]));
+		   if( likeAVirgin){
+			 
+			   throw new IllegalArgumentException("No action mapped, please check annotations method: " + method.getDeclaringClass() + "." + method.getName());
+		   }
+		   return result;
 		   // method.setAccessible(true);
 		   //return method.invoke(modelRepository.get( method.getAnnotation(MethodInvocation.class).clazz()), args);
 		} catch(final InvocationTargetException  ex ) {
@@ -45,6 +51,30 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 			
 		}
 		
+	}
+
+	private Object handleActionEvent(final Method method, final Object[] args, final Class<?> clazz, final ActionEvent action) throws NoSuchMethodException, IllegalAccessException,
+			InvocationTargetException {
+		final List<Class<?>> paramClasses = new ArrayList<>();
+		final List<Object> paramValues = new ArrayList<>();
+		for (final Parameter parameter : action.params()) {
+			paramClasses.add(parameter.clazz());
+			handleParameterValue(args, paramValues, parameter);
+		}
+		final Method targetMethod = clazz.getMethod(methodName(method, action), paramClasses.toArray(new Class[paramClasses.size()]));
+		targetMethodExistsGuard(targetMethod);
+
+		
+		return targetMethod.invoke(modelRepository.get(clazz), paramValues.toArray(new Object[paramValues.size()]));
+		
+	}
+
+	private String methodName(final Method method, final ActionEvent action) {
+		String methodName=method.getName();
+		   if ( action.name().trim().length()>0){
+			   methodName=action.name();
+		   }
+		return methodName;
 	}
 
 	private void handleParameterValue(final Object[] args, final List<Object> paramValues, final Parameter parameter) {
@@ -58,7 +88,7 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 	private void targetMethodExistsGuard(final Method targetMethod) {
 		if (targetMethod == null){
 			    throw new RuntimeException("Method with Annotated params not found, please check classes within params");
-		   }
+		}
 	}
 
 	private void annotationExistsGuard(final Method method) {
