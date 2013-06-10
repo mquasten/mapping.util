@@ -43,6 +43,7 @@ public class ExceptionTanslationListInterceptorTest {
 		factory = Mockito.mock(AOProxyFactory.class);
 		Mockito.when(beanResolver.getBeanOfType(AOProxyFactory.class)).thenReturn(factory);
 		Mockito.when(factory.createProxy(ArtistAO.class, modelRepository)).thenReturn(artistAO);
+		System.setProperty(ArtistControllerImpl.Artist_HASHCODE_KEY, "");
 	}
 	
 	
