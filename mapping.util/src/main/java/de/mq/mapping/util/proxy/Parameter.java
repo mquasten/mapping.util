@@ -16,4 +16,5 @@ public @interface Parameter {
 	
     String el() default ""; 
 	
+    Class<?> elResultType() default Void.class ; 
 }

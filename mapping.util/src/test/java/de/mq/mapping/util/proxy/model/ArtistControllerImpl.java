@@ -17,6 +17,8 @@ public class ArtistControllerImpl  implements ArtistController {
 	
 	private final BeanConventionCGLIBProxyFactory factory = new BeanConventionCGLIBProxyFactory();
 	
+	public   static final String Artist_HASHCODE_KEY  = "artist";
+	
 	
 	/* (non-Javadoc)
 	 * @see de.mq.mapping.util.proxy.model.ArtistController#artist(java.lang.Long)
@@ -51,6 +53,18 @@ public class ArtistControllerImpl  implements ArtistController {
 		throw new IllegalArgumentException();
 	}
 	
+	
+
+
+	
+	public void store(final Artist artist) {
+		System.setProperty(Artist_HASHCODE_KEY, String.valueOf(artist.hashCode()));
+	}
+	
+	
+	public void store(final ArtistAO artist) {
+		System.setProperty(Artist_HASHCODE_KEY, String.valueOf(artist.hashCode()));
+	}
 	
 
 }

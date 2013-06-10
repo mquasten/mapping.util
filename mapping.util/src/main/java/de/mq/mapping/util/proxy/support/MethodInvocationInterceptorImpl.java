@@ -63,23 +63,28 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		final List<Class<?>> paramClasses = new ArrayList<>();
 		final List<Object> paramValues = new ArrayList<>();
 		for (final Parameter parameter : action.params()) {
-			paramClasses.add(parameter.clazz());
+			paramClasses.add(parameterClass(parameter)); 
 			paramValues.add(handleParameterValue(args,parameter));
 		}
-		final Method targetMethod = clazz.getMethod(methodName(method, action), paramClasses.toArray(new Class[paramClasses.size()]));
-		targetMethodExistsGuard(targetMethod);
-
-		
+		final Method targetMethod = clazz.getMethod(methodName(method, action), paramClasses.toArray(new Class[paramClasses.size()]));		
 		return targetMethod.invoke(modelRepository.get(clazz), paramValues.toArray(new Object[paramValues.size()]));
 		
 	}
 
-	private String methodName(final Method method, final ActionEvent action) {
-		String methodName=method.getName();
-		if ( action.name().trim().length()>0){
-			   methodName=action.name();
+	private Class<?> parameterClass(final Parameter parameter) {
+		if(  parameter.el().trim().length() == 0 ) {
+		    return parameter.clazz();
+		   
+		} else {
+			return parameter.elResultType();
 		}
-		return methodName;
+	}
+
+	private String methodName(final Method method, final ActionEvent action) {
+		if ( action.name().trim().length()>0){
+			   return action.name();
+		}
+		return method.getName();
 	}
 
 	private Object handleParameterValue(final Object[] args, final Parameter parameter) {
@@ -100,11 +105,7 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 
 	
 
-	private void targetMethodExistsGuard(final Method targetMethod) {
-		if (targetMethod == null){
-			throw new RuntimeException("Method with Annotated params not found, please check classes within params");
-		}
-	}
+	
 
 	private void annotationExistsGuard(final Method method) {
 		if(! method.isAnnotationPresent(MethodInvocation.class) ){

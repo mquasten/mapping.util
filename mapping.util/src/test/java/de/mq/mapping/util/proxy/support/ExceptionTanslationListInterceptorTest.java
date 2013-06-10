@@ -13,7 +13,9 @@ import de.mq.mapping.util.proxy.Action;
 import de.mq.mapping.util.proxy.BeanResolver;
 import de.mq.mapping.util.proxy.ModelRepository;
 import de.mq.mapping.util.proxy.model.ActionMock;
+import de.mq.mapping.util.proxy.model.Artist;
 import de.mq.mapping.util.proxy.model.ArtistAO;
+import de.mq.mapping.util.proxy.model.ArtistControllerAO;
 import de.mq.mapping.util.proxy.model.ArtistControllerImpl;
 import de.mq.mapping.util.proxy.model.DoNothingActionMock;
 
@@ -81,6 +83,36 @@ public class ExceptionTanslationListInterceptorTest {
 		Assert.assertEquals(artistAO, interceptor.invoke(method, new Object[] {}));
 	}
 	
+	@Test
+	public final void storeArtist() throws Throwable {
+		final Method method = ArtistControllerAO.class.getMethod("store" );
+		
+		final ArtistAO artistAO = Mockito.mock(ArtistAO.class);
+		Mockito.when(beanResolver.getBeanOfType(ArtistAO.class)).thenReturn(artistAO);
+		Artist artist = Mockito.mock(Artist.class);
+		
+		Mockito.when( artistAO.getArtist()).thenReturn(artist);
+		interceptor.invoke(method, new Object[]{});
+		Assert.assertEquals(artist.hashCode(), (int) Integer.valueOf(System.getProperty(ArtistControllerImpl.Artist_HASHCODE_KEY)));
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public final void managedBeanNotFound() throws Throwable {
+		final Method method = ArtistControllerAO.class.getMethod("store" );
+		
+		interceptor.invoke(method, new Object[]{});
+	}
+	
+	@Test
+	public final void targetMethodNotExists() throws Throwable {
+		final Method method = ArtistControllerAO.class.getMethod("store2" );
+		
+		Assert.assertNotNull(method);
+		final ArtistAO artistAO = Mockito.mock(ArtistAO.class);
+		Mockito.when(beanResolver.getBeanOfType(ArtistAO.class)).thenReturn(artistAO);
+		interceptor.invoke(method, new Object[]{});
+		Assert.assertEquals(artistAO.hashCode(), (int) Integer.valueOf(System.getProperty(ArtistControllerImpl.Artist_HASHCODE_KEY)));
+	}
 	
 
 }
