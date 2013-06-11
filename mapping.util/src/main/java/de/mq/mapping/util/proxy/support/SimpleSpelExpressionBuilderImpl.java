@@ -1,0 +1,49 @@
+package de.mq.mapping.util.proxy.support;
+
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
+
+public class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
+	
+	 private final ExpressionParser parser = new SpelExpressionParser();        
+	 private final StandardEvaluationContext context = new StandardEvaluationContext();
+	 private Expression expression;
+	 
+	
+	/* (non-Javadoc)
+	 * @see de.mq.mapping.util.proxy.support.ELExpressionParser#withVariable(java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public final ELExpressionParser withVariable(final String name, final Object value) {
+		context.setVariable(name, value);
+		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.mq.mapping.util.proxy.support.ELExpressionParser#withExpression(java.lang.String)
+	 */
+	@Override
+	public final ELExpressionParser withExpression(final String elExpression){
+		this.expression= parser.parseExpression(elExpression);
+		return this;
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.mq.mapping.util.proxy.support.ELExpressionParser#parse()
+	 */
+	@Override
+	public final Object  parse(){
+		expressionExistsGuard();
+		return expression.getValue(context);
+	}
+
+	private void expressionExistsGuard() {
+		if ( expression==null){
+			throw new IllegalArgumentException("An expression should be given.");
+		}
+	}
+
+}

@@ -115,5 +115,19 @@ public class ExceptionTanslationListInterceptorTest {
 		Assert.assertEquals(artistAO.hashCode(), (int) Integer.valueOf(System.getProperty(ArtistControllerImpl.Artist_HASHCODE_KEY)));
 	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public final void noAction() throws Throwable {
+		final Method method = ArtistControllerAO.class.getMethod("dummy" );
+		Assert.assertNotNull(method);
+		interceptor.invoke(method,new Object[]{});
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public final void notAnnotated() throws Throwable {
+		final Method method = ArtistControllerAO.class.getMethod("dummy2" );
+		Assert.assertNotNull(method);
+		interceptor.invoke(method, new Object[]{});
+	}
+	
 
 }
