@@ -1,5 +1,6 @@
 package de.mq.mapping.util.proxy.support;
 
+import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -8,7 +9,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 public class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 	
 	 private final ExpressionParser parser = new SpelExpressionParser();        
-	 private final StandardEvaluationContext context = new StandardEvaluationContext();
+	 private final EvaluationContext context = new StandardEvaluationContext();
 	 private Expression expression;
 	 
 	
