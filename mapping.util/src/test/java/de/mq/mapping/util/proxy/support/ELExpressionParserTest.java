@@ -64,5 +64,10 @@ public class ELExpressionParserTest {
 		
 	}
 	
+	@Test
+	public final void factory() {
+		Assert.assertEquals(SimpleSpelExpressionBuilderImpl.class, new SimpleSpelExpressionParserFactory().expexpressionParser().getClass());
+	}
+	
 
 }

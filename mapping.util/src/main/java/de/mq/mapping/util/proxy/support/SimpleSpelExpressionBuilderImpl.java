@@ -6,7 +6,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-public class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
+class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 	
 	 private final ExpressionParser parser = new SpelExpressionParser();        
 	 private final EvaluationContext context = new StandardEvaluationContext();
