@@ -62,7 +62,8 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 			paramClasses.add(parameterClass(parameter)); 
 			paramValues.add(handleParameterValue(args,parameter));
 		}
-		final Method targetMethod = clazz.getMethod(methodName(method, action), paramClasses.toArray(new Class[paramClasses.size()]));		
+		final Method targetMethod = clazz.getDeclaredMethod(methodName(method, action), paramClasses.toArray(new Class[paramClasses.size()]));	
+		targetMethod.setAccessible(true);
 		return targetMethod.invoke(modelRepository.get(clazz), paramValues.toArray(new Object[paramValues.size()]));
 		
 	}
@@ -96,6 +97,8 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		if( parameter.el().trim().length() == 0 ){
 			   return managedBean ;   
 		} 
+		
+		
 		return modelRepository.beanResolver().getBeanOfType(ELExpressionParser.class).withVariable(ARG, managedBean).withExpression(parameter.el()).parse();
 	}
 

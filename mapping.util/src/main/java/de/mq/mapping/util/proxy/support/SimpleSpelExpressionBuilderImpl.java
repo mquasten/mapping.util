@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.expression.spel.SpelMessage;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
@@ -42,7 +44,18 @@ class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 	@Override
 	public final Object  parse(){
 		expressionExistsGuard();
-		return expression.getValue(context);
+		try {
+		    return expression.getValue(context);
+		} catch (final SpelEvaluationException spelEvaluationException){
+			return handleException(spelEvaluationException);
+		}
+	}
+
+	private Object handleException(final SpelEvaluationException spelEvaluationException) {
+		if( spelEvaluationException.getMessageCode().equals(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL)) {
+		   return null;	
+		}
+		throw spelEvaluationException;
 	}
 
 	private void expressionExistsGuard() {

@@ -2,11 +2,14 @@ package de.mq.mapping.util.proxy.support;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.expression.spel.SpelMessage;
 import org.springframework.test.util.ReflectionTestUtils;
 import de.mq.mapping.util.proxy.model.ArtistAO;
 
@@ -16,6 +19,18 @@ public class ELExpressionParserTest {
 	private static final String VARIABLE_NAME = "artist";
 	private static final String EL_EXPRESSION = "#artist.name";
 
+	final Expression expression = Mockito.mock(Expression.class);
+	final EvaluationContext evaluationContext = Mockito.mock(EvaluationContext.class);
+	final ELExpressionParser elExpressionParser = new SimpleSpelExpressionBuilderImpl();
+	
+	@Before
+	public final void setup() {
+	
+		ReflectionTestUtils.setField(elExpressionParser, "expression", expression);
+		ReflectionTestUtils.setField(elExpressionParser, "context", evaluationContext);
+	}
+	
+	
 	@Test
 	public final void withVariable() {
 		final ArtistAO artist = Mockito.mock(ArtistAO.class);
@@ -42,15 +57,24 @@ public class ELExpressionParserTest {
 	
 	@Test
 	public final void parse() {
-		final Expression expression = Mockito.mock(Expression.class);
-		final EvaluationContext evaluationContext = Mockito.mock(EvaluationContext.class);
-		final ELExpressionParser elExpressionParser = new SimpleSpelExpressionBuilderImpl();
-		ReflectionTestUtils.setField(elExpressionParser, "expression", expression);
-		ReflectionTestUtils.setField(elExpressionParser, "context", evaluationContext);
+		
 		Mockito.when(expression.getValue(evaluationContext)).thenReturn(NAME);
 		Assert.assertEquals(NAME, elExpressionParser.parse());
 		Mockito.verify(expression).getValue(evaluationContext);
 		
+	}
+	
+	@Test
+	public final void parseWithNullProperty() {
+		Mockito.when(expression.getValue(evaluationContext)).thenThrow(new SpelEvaluationException(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL));
+		Assert.assertNull(elExpressionParser.parse());
+	}
+	
+	
+	@Test(expected=SpelEvaluationException.class)
+	public final void parseException() {
+		Mockito.when(expression.getValue(evaluationContext)).thenThrow(new SpelEvaluationException(SpelMessage.ARGLIST_SHOULD_NOT_BE_EVALUATED));
+		elExpressionParser.parse();
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
