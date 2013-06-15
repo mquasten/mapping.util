@@ -100,7 +100,7 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		if( parameter.el().trim().length() == 0 ){
 			   return managedBean ;   
 		} 
-		return parseEl(parameter.el(), managedBean, ARG);
+		return modelRepository.beanResolver().getBeanOfType(ELExpressionParser.class).withVariable(ARG, managedBean).withExpression(parameter.el()).parse();
 	}
 
 	
@@ -139,11 +139,6 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		} */
 	}
 	
-	private Object parseEl(final String expression, final Object arg, final String argName) {
-		final ExpressionParser parser = new SpelExpressionParser();
-		final StandardEvaluationContext context = new StandardEvaluationContext();
-		context.setVariable(argName, arg);
-		return parser.parseExpression(expression).getValue(context);
-	}
+	
 
 }

@@ -1,11 +1,15 @@
 package de.mq.mapping.util.proxy.support;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("prototype")
 class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 	
 	 private final ExpressionParser parser = new SpelExpressionParser();        

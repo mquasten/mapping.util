@@ -12,14 +12,18 @@ import de.mq.mapping.util.proxy.model.ArtistAO;
 
 public class ELExpressionParserTest {
 	
+	private static final String NAME = "Kylie";
+	private static final String VARIABLE_NAME = "artist";
+	private static final String EL_EXPRESSION = "#artist.name";
+
 	@Test
 	public final void withVariable() {
 		final ArtistAO artist = Mockito.mock(ArtistAO.class);
 		final EvaluationContext evaluationContext = Mockito.mock(EvaluationContext.class);
 		final ELExpressionParser elExpressionParser = new SimpleSpelExpressionBuilderImpl();
 		ReflectionTestUtils.setField(elExpressionParser, "context", evaluationContext);
-		Assert.assertEquals(elExpressionParser, elExpressionParser.withVariable("artist", artist));
-		Mockito.verify(evaluationContext).setVariable("artist", artist);
+		Assert.assertEquals(elExpressionParser, elExpressionParser.withVariable(VARIABLE_NAME, artist));
+		Mockito.verify(evaluationContext).setVariable(VARIABLE_NAME, artist);
 	}
 	
 	@Test
@@ -28,11 +32,11 @@ public class ELExpressionParserTest {
 		final ELExpressionParser elExpressionParser = new SimpleSpelExpressionBuilderImpl();
 		final ExpressionParser expressionParser = Mockito.mock(ExpressionParser.class);
 		ReflectionTestUtils.setField(elExpressionParser, "parser", expressionParser);
-		Mockito.when(expressionParser.parseExpression("#artist.name")).thenReturn(expression);
+		Mockito.when(expressionParser.parseExpression(EL_EXPRESSION)).thenReturn(expression);
 		Assert.assertNull(ReflectionTestUtils.getField(elExpressionParser, "expression"));
-		Assert.assertEquals(elExpressionParser, elExpressionParser.withExpression("#artist.name"));
+		Assert.assertEquals(elExpressionParser, elExpressionParser.withExpression(EL_EXPRESSION));
 		Assert.assertEquals(expression, ReflectionTestUtils.getField(elExpressionParser, "expression"));
-		Mockito.verify(expressionParser).parseExpression("#artist.name");
+		Mockito.verify(expressionParser).parseExpression(EL_EXPRESSION);
 		
 	}
 	
@@ -43,8 +47,8 @@ public class ELExpressionParserTest {
 		final ELExpressionParser elExpressionParser = new SimpleSpelExpressionBuilderImpl();
 		ReflectionTestUtils.setField(elExpressionParser, "expression", expression);
 		ReflectionTestUtils.setField(elExpressionParser, "context", evaluationContext);
-		Mockito.when(expression.getValue(evaluationContext)).thenReturn("Kylie");
-		Assert.assertEquals("Kylie", elExpressionParser.parse());
+		Mockito.when(expression.getValue(evaluationContext)).thenReturn(NAME);
+		Assert.assertEquals(NAME, elExpressionParser.parse());
 		Mockito.verify(expression).getValue(evaluationContext);
 		
 	}
@@ -59,15 +63,12 @@ public class ELExpressionParserTest {
 	public final void parseWithRealValues() {
 		
 		final ArtistAO artist = Mockito.mock(ArtistAO.class);
-		Mockito.when(artist.getName()).thenReturn("Kylie");
-		Assert.assertEquals("Kylie", new SimpleSpelExpressionBuilderImpl().withVariable("artist", artist).withExpression("#artist.name").parse());
+		Mockito.when(artist.getName()).thenReturn(NAME);
+		Assert.assertEquals(NAME, new SimpleSpelExpressionBuilderImpl().withVariable(VARIABLE_NAME, artist).withExpression(EL_EXPRESSION).parse());
 		
 	}
 	
-	@Test
-	public final void factory() {
-		Assert.assertEquals(SimpleSpelExpressionBuilderImpl.class, new SimpleSpelExpressionParserFactory().expexpressionParser().getClass());
-	}
+	
 	
 
 }

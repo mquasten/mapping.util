@@ -28,8 +28,8 @@ public class ExceptionTanslationListInterceptorTest {
 	private BeanResolver beanResolver;
 	
 	private ArtistControllerImpl controller;
-	final ArtistAO artistAO = Mockito.mock(ArtistAO.class);
-	
+	private final ArtistAO artistAO = Mockito.mock(ArtistAO.class);
+	private final ELExpressionParser elExpressionParser = Mockito.mock(ELExpressionParser.class);
 	
 	
 	@Before
@@ -44,6 +44,10 @@ public class ExceptionTanslationListInterceptorTest {
 		Mockito.when(beanResolver.getBeanOfType(AOProxyFactory.class)).thenReturn(factory);
 		Mockito.when(factory.createProxy(ArtistAO.class, modelRepository)).thenReturn(artistAO);
 		System.setProperty(ArtistControllerImpl.Artist_HASHCODE_KEY, "");
+		
+		Mockito.when(elExpressionParser.withExpression(Mockito.anyString())).thenReturn(elExpressionParser);
+		Mockito.when(elExpressionParser.withVariable(Mockito.anyString(), Mockito.any())).thenReturn(elExpressionParser);
+		Mockito.when(beanResolver.getBeanOfType(ELExpressionParser.class)).thenReturn(elExpressionParser);
 	}
 	
 	
@@ -87,12 +91,12 @@ public class ExceptionTanslationListInterceptorTest {
 	@Test
 	public final void storeArtist() throws Throwable {
 		final Method method = ArtistControllerAO.class.getMethod("store" );
-		
 		final ArtistAO artistAO = Mockito.mock(ArtistAO.class);
 		Mockito.when(beanResolver.getBeanOfType(ArtistAO.class)).thenReturn(artistAO);
-		Artist artist = Mockito.mock(Artist.class);
 		
-		Mockito.when( artistAO.getArtist()).thenReturn(artist);
+		Artist artist = Mockito.mock(Artist.class);
+		Mockito.when(elExpressionParser.parse()).thenReturn(artist);
+		
 		interceptor.invoke(method, new Object[]{});
 		Assert.assertEquals(artist.hashCode(), (int) Integer.valueOf(System.getProperty(ArtistControllerImpl.Artist_HASHCODE_KEY)));
 	}
