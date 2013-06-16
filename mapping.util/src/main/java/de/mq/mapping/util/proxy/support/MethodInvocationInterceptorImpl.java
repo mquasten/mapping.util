@@ -30,6 +30,7 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		   Object result=null; 
 		   boolean likeAVirgin=true;
 		   for(final ActionEvent action : method.getAnnotation(MethodInvocation.class).actions()){
+			  
 			   final Object methodResult = handleActionEvent(method, args, clazz, action);
 			   if( methodResult != null){
 				   result=methodResult;
@@ -62,6 +63,8 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 			paramClasses.add(parameterClass(parameter)); 
 			paramValues.add(handleParameterValue(args,parameter));
 		}
+		
+		
 		final Method targetMethod = clazz.getDeclaredMethod(methodName(method, action), paramClasses.toArray(new Class[paramClasses.size()]));	
 		targetMethod.setAccessible(true);
 		return targetMethod.invoke(modelRepository.get(clazz), paramValues.toArray(new Object[paramValues.size()]));
