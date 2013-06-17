@@ -1,5 +1,8 @@
 package de.mq.mapping.util.proxy.support;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -17,6 +20,8 @@ class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 	 private final ExpressionParser parser = new SpelExpressionParser();        
 	 private final EvaluationContext context = new StandardEvaluationContext();
 	 private Expression expression;
+	 
+	 private Set<SpelMessage> skippedException=new HashSet<>();
 	 
 	
 	/* (non-Javadoc)
@@ -38,6 +43,16 @@ class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 		
 	}
 	
+	@Override
+	public ELExpressionParser withSkipNotReachableOnNullPropertyException(final boolean skipException ) {
+		this.skippedException.remove(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL);
+		if(skipException) {
+			this.skippedException.add(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL);
+		}
+		return this;
+	} 
+	
+	
 	/* (non-Javadoc)
 	 * @see de.mq.mapping.util.proxy.support.ELExpressionParser#parse()
 	 */
@@ -51,17 +66,25 @@ class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 		}
 	}
 
+	
+	
+	
 	private Object handleException(final SpelEvaluationException spelEvaluationException) {
-		if( spelEvaluationException.getMessageCode().equals(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL)) {
-		   return null;	
+		if (skippedException.contains(spelEvaluationException.getMessageCode())){
+			return null;
 		}
 		throw spelEvaluationException;
 	}
 
+	
+	
+	
 	private void expressionExistsGuard() {
 		if ( expression==null){
 			throw new IllegalArgumentException("An expression should be given.");
 		}
 	}
+
+	
 
 }

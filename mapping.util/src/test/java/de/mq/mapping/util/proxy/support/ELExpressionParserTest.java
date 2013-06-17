@@ -1,5 +1,7 @@
 package de.mq.mapping.util.proxy.support;
 
+import java.util.Set;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -11,6 +13,8 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.SpelMessage;
 import org.springframework.test.util.ReflectionTestUtils;
+
+
 import de.mq.mapping.util.proxy.model.ArtistAO;
 
 public class ELExpressionParserTest {
@@ -55,6 +59,28 @@ public class ELExpressionParserTest {
 		
 	}
 	
+	
+	@Test
+	public final void withSkipNotReachableOnNullPropertyExceptionTrue() {
+		final ELExpressionParser elExpressionParser = new SimpleSpelExpressionBuilderImpl();
+		Assert.assertEquals(elExpressionParser, elExpressionParser.withSkipNotReachableOnNullPropertyException(true));
+		@SuppressWarnings("unchecked")
+		final Set<SpelMessage> results = (Set<SpelMessage>) ReflectionTestUtils.getField(elExpressionParser, "skippedException");
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL, results.iterator().next());
+	}
+	
+	@Test
+	public final void withSkipNotReachableOnNullPropertyExceptionFalse() {
+		final ELExpressionParser elExpressionParser = new SimpleSpelExpressionBuilderImpl();
+		@SuppressWarnings("unchecked")
+		final Set<SpelMessage> results = (Set<SpelMessage>) ReflectionTestUtils.getField(elExpressionParser, "skippedException");
+		results.add(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL);
+		Assert.assertEquals(elExpressionParser, elExpressionParser.withSkipNotReachableOnNullPropertyException(false));
+		Assert.assertTrue(results.isEmpty());
+	}
+
+	
 	@Test
 	public final void parse() {
 		
@@ -64,8 +90,12 @@ public class ELExpressionParserTest {
 		
 	}
 	
+	
 	@Test
 	public final void parseWithNullProperty() {
+		@SuppressWarnings("unchecked")
+		final Set<SpelMessage> skipped = (Set<SpelMessage>) ReflectionTestUtils.getField(elExpressionParser, "skippedException");
+		skipped.add(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL);
 		Mockito.when(expression.getValue(evaluationContext)).thenThrow(new SpelEvaluationException(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL));
 		Assert.assertNull(elExpressionParser.parse());
 	}

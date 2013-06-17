@@ -17,4 +17,6 @@ public @interface Parameter {
     String el() default ""; 
 	
     Class<?> elResultType() default Void.class ; 
+    
+    boolean skipNotReachableOnNullElException() default false;
 }

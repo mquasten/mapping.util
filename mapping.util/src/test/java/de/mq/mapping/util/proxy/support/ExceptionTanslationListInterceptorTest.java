@@ -47,6 +47,7 @@ public class ExceptionTanslationListInterceptorTest {
 		
 		Mockito.when(elExpressionParser.withExpression(Mockito.anyString())).thenReturn(elExpressionParser);
 		Mockito.when(elExpressionParser.withVariable(Mockito.anyString(), Mockito.any())).thenReturn(elExpressionParser);
+		Mockito.when(elExpressionParser.withSkipNotReachableOnNullPropertyException(Mockito.anyBoolean())).thenReturn(elExpressionParser);
 		Mockito.when(beanResolver.getBeanOfType(ELExpressionParser.class)).thenReturn(elExpressionParser);
 	}
 	

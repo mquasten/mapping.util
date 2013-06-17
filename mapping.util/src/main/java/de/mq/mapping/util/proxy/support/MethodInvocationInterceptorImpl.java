@@ -102,7 +102,7 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		} 
 		
 		
-		return modelRepository.beanResolver().getBeanOfType(ELExpressionParser.class).withVariable(ARG, managedBean).withExpression(parameter.el()).parse();
+		return modelRepository.beanResolver().getBeanOfType(ELExpressionParser.class).withVariable(ARG, managedBean).withExpression(parameter.el()).withSkipNotReachableOnNullPropertyException(parameter.skipNotReachableOnNullElException()).parse();
 	}
 
 	

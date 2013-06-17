@@ -23,6 +23,15 @@ public interface ELExpressionParser {
 	 */
 	ELExpressionParser withExpression(String elExpression);
 
+	
+	
+	/**
+	 * The not eadable on Null Exception is be catched. Null is returned.
+	 * @param skip exception true/false
+	 * @return the builder itself
+	 */
+	ELExpressionParser withSkipNotReachableOnNullPropertyException(final boolean skipException);
+	
 	/**
 	 * Parse the expression with the assigned variables
 	 * @return the result of the expression
