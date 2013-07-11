@@ -28,8 +28,6 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 		}
 	}
 
-
-
 	private void methodAnnotationGuard(final Method method) {
 		if ( ! method.isAnnotationPresent(GetterProxyCollection.class)) {
 			throw new IllegalStateException("Method " + method.getName() + " should be annotated with " + GetterProxyCollection.class.getSimpleName());
