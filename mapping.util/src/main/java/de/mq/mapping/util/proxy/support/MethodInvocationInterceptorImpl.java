@@ -124,9 +124,6 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		
 	}
 
-	
-
-	
 
 	private void annotationExistsGuard(final Method method) {
 		if(! method.isAnnotationPresent(MethodInvocation.class) ){
