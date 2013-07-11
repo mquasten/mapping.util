@@ -12,6 +12,12 @@ public abstract class ArtistControllerAO {
 	@MethodInvocation(clazz=ArtistControllerImpl.class, actions={ @ActionEvent( name="store" , params={@Parameter(clazz=ArtistAO.class )})})
 	public abstract void store2();
 	
+	@MethodInvocation(clazz=ArtistControllerImpl.class, actions={ @ActionEvent( name="store" , params={@Parameter(clazz=Artist.class , domain=ArtistImpl.class )})})
+	public abstract void storeDomain();
+	
+	@MethodInvocation(clazz=ArtistControllerImpl.class, actions={ @ActionEvent( name="store" , params={@Parameter(clazz=Artist.class , property="artist" )})})
+	public abstract void storeProperty();
+	
 	@MethodInvocation(clazz=ArtistControllerImpl.class)
 	public abstract void dummy();
 	

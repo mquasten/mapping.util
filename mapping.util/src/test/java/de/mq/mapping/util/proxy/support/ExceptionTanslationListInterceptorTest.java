@@ -12,11 +12,13 @@ import de.mq.mapping.util.proxy.AOProxyFactory;
 import de.mq.mapping.util.proxy.Action;
 import de.mq.mapping.util.proxy.BeanResolver;
 import de.mq.mapping.util.proxy.ModelRepository;
+import de.mq.mapping.util.proxy.NoModel;
 import de.mq.mapping.util.proxy.model.ActionMock;
 import de.mq.mapping.util.proxy.model.Artist;
 import de.mq.mapping.util.proxy.model.ArtistAO;
 import de.mq.mapping.util.proxy.model.ArtistControllerAO;
 import de.mq.mapping.util.proxy.model.ArtistControllerImpl;
+import de.mq.mapping.util.proxy.model.ArtistImpl;
 import de.mq.mapping.util.proxy.model.DoNothingActionMock;
 
 public class ExceptionTanslationListInterceptorTest {
@@ -61,6 +63,8 @@ public class ExceptionTanslationListInterceptorTest {
 	}
 	
 	
+	
+	
 	@Test
 	public final void translateExceptionNothingTrown() throws Throwable {
 		final Method method = ArtistControllerImpl.class.getMethod("artist", Long.class);
@@ -102,6 +106,25 @@ public class ExceptionTanslationListInterceptorTest {
 		Assert.assertEquals(artist.hashCode(), (int) Integer.valueOf(System.getProperty(ArtistControllerImpl.Artist_HASHCODE_KEY)));
 	}
 	
+	@Test
+	public final void storeArtistDomain() throws Throwable {
+		final Method method = ArtistControllerAO.class.getMethod("storeDomain" );
+		final Artist artist = new ArtistImpl("Kylie");
+		Mockito.when(modelRepository.get(ArtistImpl.class)).thenReturn(artist);
+		interceptor.invoke(method, new Object[]{});
+		Assert.assertEquals( artist.hashCode(), (int) Integer.valueOf(System.getProperty(ArtistControllerImpl.Artist_HASHCODE_KEY)));
+	}
+	
+	@Test
+	public final void storeArtistProperty() throws Throwable {
+		final Method method = ArtistControllerAO.class.getMethod("storeProperty" );
+		final Artist artist = new ArtistImpl("Kylie");
+		
+		Mockito.when(modelRepository.get(NoModel.class, "artist")).thenReturn(artist);
+		interceptor.invoke(method, new Object[]{});
+		Assert.assertEquals(artist.hashCode(), (int) Integer.valueOf(System.getProperty(ArtistControllerImpl.Artist_HASHCODE_KEY)));
+	}
+	
 	@Test(expected=IllegalArgumentException.class)
 	public final void managedBeanNotFound() throws Throwable {
 		final Method method = ArtistControllerAO.class.getMethod("store" );
@@ -133,6 +156,8 @@ public class ExceptionTanslationListInterceptorTest {
 		Assert.assertNotNull(method);
 		interceptor.invoke(method, new Object[]{});
 	}
+	
+	
 	
 
 }

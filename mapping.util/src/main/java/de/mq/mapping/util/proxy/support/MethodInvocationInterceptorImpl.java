@@ -10,6 +10,7 @@ import de.mq.mapping.util.proxy.ActionEvent;
 import de.mq.mapping.util.proxy.ExceptionTranslation;
 import de.mq.mapping.util.proxy.MethodInvocation;
 import de.mq.mapping.util.proxy.ModelRepository;
+import de.mq.mapping.util.proxy.NoModel;
 import de.mq.mapping.util.proxy.Parameter;
 
 public class MethodInvocationInterceptorImpl implements Interceptor {
@@ -88,14 +89,9 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 	}
 
 	private Object handleParameterValue(final Object[] args, final Parameter parameter) {
-	    if( parameter.originIndex() >=0 ){
-			return args[parameter.originIndex()];
-			 
-		}
-		final Object managedBean = modelRepository.beanResolver().getBeanOfType(parameter.clazz());
-		if( managedBean==null){
-			throw new IllegalArgumentException("Bean of type " + parameter.clazz() + " can not be resolved" );
-		}
+		final Object managedBean = getBean(args, parameter);
+		
+		beanExistsGuard(managedBean);
 		
 		if( parameter.el().trim().length() == 0 ){
 			   return managedBean ;   
@@ -103,6 +99,29 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		
 		
 		return modelRepository.beanResolver().getBeanOfType(ELExpressionParser.class).withVariable(ARG, managedBean).withExpression(parameter.el()).withSkipNotReachableOnNullPropertyException(parameter.skipNotReachableOnNullElException()).parse();
+	}
+
+	private Object getBean(final Object[] args, final Parameter parameter) {
+		
+		if( parameter.originIndex() >=0 ){
+			return args[parameter.originIndex()];
+			 
+		}
+	    if( parameter.domain() != Void.class){
+	    	return  modelRepository.get(parameter.domain());
+	    }
+	    
+	    if( parameter.property().trim().length() != 0 ) {
+	    	return modelRepository.get(NoModel.class, parameter.property());
+	    }
+	    return modelRepository.beanResolver().getBeanOfType(parameter.clazz());
+	}
+
+	private void beanExistsGuard( final Object managedBean) {
+		if( managedBean==null){
+			throw new IllegalArgumentException("Bean can not be resolved" );
+		}
+		
 	}
 
 	
