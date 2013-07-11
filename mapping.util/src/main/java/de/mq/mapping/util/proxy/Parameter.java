@@ -14,14 +14,13 @@ public @interface Parameter {
 	
 	int originIndex() default -1; 
 	
-    Class<?> domain() default Void.class;
-    
-    String property() default ""; 
-	
-	String el() default ""; 
+    String el() default ""; 
 	
     Class<?> elResultType() default Void.class ; 
     
     boolean skipNotReachableOnNullElException() default false;
     
+    Class<?> domain() default Void.class;
+    
+    String property() default "";
 }
