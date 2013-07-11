@@ -23,7 +23,6 @@ public class ModelRepositoryBuilderImpl implements ModelRepositoryBuilder {
 	public final ModelRepositoryBuilder withBeanResolver(final BeanResolver beanResolver) {
 		 this.beanResolver=beanResolver;
 		 return this;
-		
 	}
 	
 	/* (non-Javadoc)
