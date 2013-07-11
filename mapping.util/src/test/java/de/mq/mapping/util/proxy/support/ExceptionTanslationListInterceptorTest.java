@@ -53,7 +53,6 @@ public class ExceptionTanslationListInterceptorTest {
 		Mockito.when(beanResolver.getBeanOfType(ELExpressionParser.class)).thenReturn(elExpressionParser);
 	}
 	
-	
 	@Test(expected=ClassNotFoundException.class)
 	public final void translateException() throws Throwable {
 		Mockito.when(beanResolver.getBeanOfType(ActionMock.class)).thenReturn(new ActionMock());
@@ -61,9 +60,6 @@ public class ExceptionTanslationListInterceptorTest {
 		final Method method = ArtistControllerImpl.class.getMethod("artist", Long.class);
 		interceptor.invoke(method, new Object[] {-1L });
 	}
-	
-	
-	
 	
 	@Test
 	public final void translateExceptionNothingTrown() throws Throwable {
