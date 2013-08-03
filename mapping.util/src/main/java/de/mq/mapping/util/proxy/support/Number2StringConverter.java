@@ -10,6 +10,12 @@ public class Number2StringConverter implements Converter<Number,String>{
 
 	@Override
 	public String convert(final Number value) {
+		/**
+		 * Sun wasn't able to do this ..
+		 */
+		if ( value == null){
+			return null;
+		}
 		return String.valueOf(value);
 	}
 
