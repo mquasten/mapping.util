@@ -122,6 +122,7 @@ public class BasicGetterCollectionInterceptorTest {
 		Assert.assertEquals(HashSet.class, results.getClass());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test()
 	public final void invokeConverterBeanNotFound() throws Throwable {
 		VideoAO videoAO = Mockito.mock(VideoAO.class);
