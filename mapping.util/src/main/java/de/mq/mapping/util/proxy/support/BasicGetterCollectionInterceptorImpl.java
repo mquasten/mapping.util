@@ -101,7 +101,8 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 	private Object resolveConverter(final Class<?> clazz) {
 		try {
 		    return  modelRepository.beanResolver().getBeanOfType(clazz);
-		} catch ( Exception ex ){
+		} catch (final Exception ex ){
+			/* bean not found exception will ignore the converter, trial and error like pawlow's dogs... ?! */
 			return null;
 		}
 	} 

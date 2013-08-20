@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.util.ReflectionUtils;
 
@@ -121,6 +122,27 @@ public class BasicGetterCollectionInterceptorTest {
 		Assert.assertEquals(HashSet.class, results.getClass());
 	}
 	
+	@Test()
+	public final void invokeConverterBeanNotFound() throws Throwable {
+		VideoAO videoAO = Mockito.mock(VideoAO.class);
+		final List<Video> videos = new ArrayList<Video>();
+		videos.add(Mockito.mock(Video.class));
+
+		Mockito.when(modelRepository.get(ArtistImpl.class, "videos3")).thenReturn(videos);
+		final Interceptor interceptor = new BasicGetterCollectionInterceptorImpl(modelRepository);
+		final Method method = ReflectionUtils.findMethod(AOMock.class, "getVideos3");
+
+		Mockito.when(beanResolver.getBeanOfType(Number2StringConverter.class)).thenThrow(new NoSuchBeanDefinitionException(Number2StringConverter.class));
+		Mockito.when(proxyFactory.createProxy(Mockito.any(Class.class), Mockito.any(ModelRepository.class))).thenReturn(videoAO);
+		Set<VideoAO> results = (Set<VideoAO>) interceptor.invoke(method, new Object[] {});
+		System.out.println(results);
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(videoAO, results.iterator().next());
+		Assert.assertEquals(HashSet.class, results.getClass());
+		
+	}
+	
+	
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
@@ -166,4 +188,7 @@ interface AOMock {
 
 	@GetterProxyCollection(clazz = ArtistImpl.class, name = "videos2", proxyClass = VideoAO.class, collectionClass = HashSet.class)
 	public abstract Set<VideoAO> getVideos2();
+	
+	@GetterProxyCollection(clazz = ArtistImpl.class, name = "videos3", proxyClass = Number2StringConverter.class, collectionClass = HashSet.class)
+	public abstract Set<VideoAO> getVideos3();
 }
