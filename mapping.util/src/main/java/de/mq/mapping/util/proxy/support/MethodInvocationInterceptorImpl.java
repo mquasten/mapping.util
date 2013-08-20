@@ -32,11 +32,13 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		   boolean likeAVirgin=true;
 		   for(final ActionEvent action : method.getAnnotation(MethodInvocation.class).actions()){
 			  
-			   final Object methodResult = handleActionEvent(method, args, clazz, action);
-			   if( methodResult != null){
+			  final Object methodResult = handleActionEvent(method, args, clazz, action);
+			  
+			  if ( ! method.getReturnType().equals(Void.TYPE)){
 				   result=methodResult;
-			   }
-			   likeAVirgin=false;
+			  }
+			  
+			  likeAVirgin=false;
 		   }
 		   
 		   if( likeAVirgin){
