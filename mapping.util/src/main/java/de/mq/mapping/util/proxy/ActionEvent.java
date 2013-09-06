@@ -11,6 +11,10 @@ public  @interface ActionEvent {
 	
 	Parameter[] params() default {};
 	
-	String name() default "";
+	String name() default "" ;
+	
+	
+	boolean startConversation() default false;
+	
 
 }

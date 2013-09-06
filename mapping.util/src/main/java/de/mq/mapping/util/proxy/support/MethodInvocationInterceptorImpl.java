@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.mq.mapping.util.proxy.Action;
 import de.mq.mapping.util.proxy.ActionEvent;
+import de.mq.mapping.util.proxy.Conversation;
 import de.mq.mapping.util.proxy.ExceptionTranslation;
 import de.mq.mapping.util.proxy.MethodInvocation;
 import de.mq.mapping.util.proxy.ModelRepository;
@@ -32,6 +33,11 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		   boolean likeAVirgin=true;
 		   for(final ActionEvent action : method.getAnnotation(MethodInvocation.class).actions()){
 			  
+			   if( action.startConversation()){
+				   modelRepository.beanResolver().getBeanOfType(Conversation.class).begin();
+			   }
+			   
+			   
 			  final Object methodResult = handleActionEvent(method, args, clazz, action);
 			  
 			  if ( ! method.getReturnType().equals(Void.TYPE)){
