@@ -19,6 +19,8 @@ public class ArtistControllerImpl  implements ArtistController {
 	
 	public   static final String Artist_HASHCODE_KEY  = "artist";
 	
+
+	
 	
 	/* (non-Javadoc)
 	 * @see de.mq.mapping.util.proxy.model.ArtistController#artist(java.lang.Long)
@@ -64,6 +66,11 @@ public class ArtistControllerImpl  implements ArtistController {
 	
 	public void store(final ArtistAO artist) {
 		System.setProperty(Artist_HASHCODE_KEY, String.valueOf(artist.hashCode()));
+	}
+	
+	
+	public void conversation() {
+	
 	}
 	
 

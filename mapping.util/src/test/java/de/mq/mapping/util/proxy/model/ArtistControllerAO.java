@@ -22,5 +22,8 @@ public abstract class ArtistControllerAO {
 	public abstract void dummy();
 	
 	public abstract void dummy2();
+	
+	@MethodInvocation(clazz=ArtistControllerImpl.class, actions={ @ActionEvent( endConversation=true, startConversation=true ) })
+	public abstract void conversation() ;
 
 }

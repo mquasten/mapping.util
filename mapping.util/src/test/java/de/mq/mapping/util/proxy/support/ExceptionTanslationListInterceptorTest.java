@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import de.mq.mapping.util.proxy.AOProxyFactory;
 import de.mq.mapping.util.proxy.Action;
 import de.mq.mapping.util.proxy.BeanResolver;
+import de.mq.mapping.util.proxy.Conversation;
 import de.mq.mapping.util.proxy.ModelRepository;
 import de.mq.mapping.util.proxy.NoModel;
 import de.mq.mapping.util.proxy.model.ActionMock;
@@ -32,6 +33,7 @@ public class ExceptionTanslationListInterceptorTest {
 	private ArtistControllerImpl controller;
 	private final ArtistAO artistAO = Mockito.mock(ArtistAO.class);
 	private final ELExpressionParser elExpressionParser = Mockito.mock(ELExpressionParser.class);
+	private final Conversation conversation = Mockito.mock(Conversation.class) ;
 	
 	
 	@Before
@@ -51,6 +53,8 @@ public class ExceptionTanslationListInterceptorTest {
 		Mockito.when(elExpressionParser.withVariable(Mockito.anyString(), Mockito.any())).thenReturn(elExpressionParser);
 		Mockito.when(elExpressionParser.withSkipNotReachableOnNullPropertyException(Mockito.anyBoolean())).thenReturn(elExpressionParser);
 		Mockito.when(beanResolver.getBeanOfType(ELExpressionParser.class)).thenReturn(elExpressionParser);
+		
+		Mockito.when(beanResolver.getBeanOfType(Conversation.class)).thenReturn(conversation);
 	}
 	
 	@Test(expected=ClassNotFoundException.class)
@@ -153,7 +157,15 @@ public class ExceptionTanslationListInterceptorTest {
 		interceptor.invoke(method, new Object[]{});
 	}
 	
-	
+	@Test
+	public final void conversation() throws Throwable {
+		final Method method = ArtistControllerAO.class.getMethod("conversation" );
+		
+		interceptor.invoke(method, new Object[]{});
+		
+		Mockito.verify(conversation).begin();
+		Mockito.verify(conversation).end();
+	}
 	
 
 }
