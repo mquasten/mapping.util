@@ -16,5 +16,7 @@ public  @interface ActionEvent {
 	
 	boolean startConversation() default false;
 	
+	boolean endConversation() default false;
+	
 
 }

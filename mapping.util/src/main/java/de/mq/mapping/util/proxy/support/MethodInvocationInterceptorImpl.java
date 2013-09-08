@@ -44,6 +44,10 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 				   result=methodResult;
 			  }
 			  
+			  if( action.endConversation()){
+				   modelRepository.beanResolver().getBeanOfType(Conversation.class).end();
+			   }
+			  
 			  likeAVirgin=false;
 		   }
 		   
