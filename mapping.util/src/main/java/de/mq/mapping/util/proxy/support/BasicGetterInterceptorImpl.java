@@ -18,8 +18,9 @@ class BasicGetterInterceptorImpl implements Interceptor  {
 	@Override
 	public final Object invoke(final Method method, final Object[] args) throws Throwable {
 		annotationAwareGuard(method);
-		
-		
+		if(method.getAnnotation(Getter.class).value().trim().length()==0){
+			return  modelRepository.get(method.getAnnotation(Getter.class).clazz(), null, method.getAnnotation(Getter.class).converter(), method.getReturnType());
+		}
 		return  modelRepository.get(method.getAnnotation(Getter.class).clazz(), method.getAnnotation(Getter.class).value(), method.getAnnotation(Getter.class).converter(), method.getReturnType());
 	}
 
