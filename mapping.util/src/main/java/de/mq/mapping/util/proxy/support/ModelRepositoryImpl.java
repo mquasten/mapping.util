@@ -72,8 +72,8 @@ class ModelRepositoryImpl implements ModelRepository {
 		}
 		
 		final Key key= new KeyImpl(clazz);
-		domainObjectNotFoundGuard(value.getClass(), key);
-		
+		domainObjectNotFoundGuard(clazz, key);
+	
 		final Object domain = modelItems.get(key);
 		final Key errorKey = new KeyImpl(clazz,field);
 		modelItems.remove(errorKey);

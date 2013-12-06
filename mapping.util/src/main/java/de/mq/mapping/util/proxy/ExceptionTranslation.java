@@ -40,6 +40,5 @@ public @interface ExceptionTranslation {
 	 * @return an el expression that returns the result
 	 */
 	String resultExpression() default ""; 
-	
 
 }
