@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.core.convert.converter.Converter;
+
 import de.mq.mapping.util.proxy.Action;
 import de.mq.mapping.util.proxy.ActionEvent;
 import de.mq.mapping.util.proxy.Conversation;
@@ -33,10 +35,10 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		   boolean likeAVirgin=true;
 		   for(final ActionEvent action : method.getAnnotation(MethodInvocation.class).actions()){
 			  
+		
 			   if( action.startConversation()){
 				   modelRepository.beanResolver().getBeanOfType(Conversation.class).begin();
 			   }
-			   
 			   
 			  final Object methodResult = handleActionEvent(method, args, clazz, action);
 			  
@@ -72,6 +74,9 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 			InvocationTargetException {
 		final List<Class<?>> paramClasses = new ArrayList<>();
 		final List<Object> paramValues = new ArrayList<>();
+		
+		
+		
 		for (final Parameter parameter : action.params()) {
 			paramClasses.add(parameterClass(parameter)); 
 			paramValues.add(handleParameterValue(args,parameter));
@@ -100,25 +105,35 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 		return method.getName();
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object handleParameterValue(final Object[] args, final Parameter parameter) {
 		final Object managedBean = getBean(args, parameter);
 		
 		beanExistsGuard(managedBean);
 		
 		if( parameter.el().trim().length() == 0 ){
-			   return managedBean ;   
+			   return convert(managedBean, (Class<? extends Converter<Object, Object>>) parameter.converter());   
 		} 
 		
-		
-		return modelRepository.beanResolver().getBeanOfType(ELExpressionParser.class).withVariable(ARG, managedBean).withExpression(parameter.el()).withSkipNotReachableOnNullPropertyException(parameter.skipNotReachableOnNullElException()).parse();
+		 
+		return convert(modelRepository.beanResolver().getBeanOfType(ELExpressionParser.class).withVariable(ARG, managedBean).withExpression(parameter.el()).withSkipNotReachableOnNullPropertyException(parameter.skipNotReachableOnNullElException()).parse(),   (Class<? extends Converter<Object, Object>>) parameter.converter());
+	}
+
+	private Object convert(final Object  result,  Class<? extends Converter<Object,Object>>  clazz) {
+		return modelRepository.beanResolver().getBeanOfType(clazz).convert(result);
 	}
 
 	private Object getBean(final Object[] args, final Parameter parameter) {
+		
 		
 		if( parameter.originIndex() >=0 ){
 			return args[parameter.originIndex()];
 			 
 		}
+		if(parameter.proxy()){
+			return modelRepository.proxy();
+		}
+		
 	    if( parameter.domain() != Void.class){
 	    	return  modelRepository.get(parameter.domain());
 	    }
@@ -126,6 +141,8 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 	    if( parameter.property().trim().length() != 0 ) {
 	    	return modelRepository.get(NoModel.class, parameter.property());
 	    }
+	 
+	    
 	    return modelRepository.beanResolver().getBeanOfType(parameter.clazz());
 	}
 

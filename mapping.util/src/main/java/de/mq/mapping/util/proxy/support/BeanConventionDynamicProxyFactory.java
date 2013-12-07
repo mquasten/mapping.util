@@ -22,11 +22,12 @@ public class BeanConventionDynamicProxyFactory extends AbstractBeanConventionPro
 		   modelRepository.beanResolver().put(AOProxyFactory.class, this);
 		}
 		return  (Web) Proxy.newProxyInstance(targetClass.getClassLoader(), new Class[] { targetClass }, new InvocationHandler() {
+		
 			
 			@Override
 			public Object invoke(final Object object, final Method method, final Object[] args) throws Throwable {
 				
-				
+				modelRepository.assignProxy(object);
 				final Integer index = index(method, null);
 			
 				if( index == null){

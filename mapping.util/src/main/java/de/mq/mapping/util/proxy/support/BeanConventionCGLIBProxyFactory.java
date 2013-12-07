@@ -93,8 +93,7 @@ public class BeanConventionCGLIBProxyFactory  extends AbstractBeanConventionProx
 				
 				@Override
 				public final Object intercept(final Object object, final Method method, final Object[] args, final MethodProxy proxy) throws Throwable {
-				
-					
+				    modelRepository.assignProxy(object);
 					return interceptor(index, modelRepository).invoke(method, args);
 					
 				}

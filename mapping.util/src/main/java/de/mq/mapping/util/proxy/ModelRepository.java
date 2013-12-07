@@ -105,5 +105,17 @@ public interface ModelRepository {
      * @param field then name of the field, that should be removed
      */
     void clear(final String field);
+    
+    /**
+     * The Proxy for that the modelRepository is used
+     * @return the object the proxy
+     */
+    Object proxy();
+    
+    /**
+     * Assign the proxy to the repository
+     * @param proxy the proxy the target object
+     */
+    void assignProxy(final Object proxy);
 
 }

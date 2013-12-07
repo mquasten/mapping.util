@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.core.convert.converter.Converter;
+
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
@@ -22,5 +24,9 @@ public @interface Parameter {
     
     Class<?> domain() default Void.class;
     
+    boolean proxy() default false;
+    
     String property() default "";
+    
+    Class<? extends Converter<?,?>> converter() default NoConverter.class;
 }

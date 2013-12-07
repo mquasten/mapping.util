@@ -7,12 +7,14 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.core.convert.converter.Converter;
 
 import de.mq.mapping.util.proxy.AOProxyFactory;
 import de.mq.mapping.util.proxy.Action;
 import de.mq.mapping.util.proxy.BeanResolver;
 import de.mq.mapping.util.proxy.Conversation;
 import de.mq.mapping.util.proxy.ModelRepository;
+import de.mq.mapping.util.proxy.NoConverter;
 import de.mq.mapping.util.proxy.NoModel;
 import de.mq.mapping.util.proxy.model.ActionMock;
 import de.mq.mapping.util.proxy.model.Artist;
@@ -34,7 +36,7 @@ public class ExceptionTanslationListInterceptorTest {
 	private final ArtistAO artistAO = Mockito.mock(ArtistAO.class);
 	private final ELExpressionParser elExpressionParser = Mockito.mock(ELExpressionParser.class);
 	private final Conversation conversation = Mockito.mock(Conversation.class) ;
-	
+	private final Converter<Object,Object> noConverter = new NoConverter();
 	
 	@Before
 	public final void setup() {
@@ -53,7 +55,7 @@ public class ExceptionTanslationListInterceptorTest {
 		Mockito.when(elExpressionParser.withVariable(Mockito.anyString(), Mockito.any())).thenReturn(elExpressionParser);
 		Mockito.when(elExpressionParser.withSkipNotReachableOnNullPropertyException(Mockito.anyBoolean())).thenReturn(elExpressionParser);
 		Mockito.when(beanResolver.getBeanOfType(ELExpressionParser.class)).thenReturn(elExpressionParser);
-		
+		Mockito.when(beanResolver.getBeanOfType(NoConverter.class)).thenReturn((NoConverter) noConverter);
 		Mockito.when(beanResolver.getBeanOfType(Conversation.class)).thenReturn(conversation);
 	}
 	

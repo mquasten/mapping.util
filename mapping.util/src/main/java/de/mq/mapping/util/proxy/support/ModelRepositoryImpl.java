@@ -24,8 +24,14 @@ class ModelRepositoryImpl implements ModelRepository {
 	
 	private final BeanResolver beanResolver;
 	
+	private Object proxy = null; 
 	
-	 ModelRepositoryImpl(final BeanResolver beanResolver, final Object ... models) {
+	
+	
+
+
+
+	ModelRepositoryImpl(final BeanResolver beanResolver, final Object ... models) {
 		this.beanResolver=beanResolver;
 		
 		for(final Object obj : models){
@@ -277,6 +283,21 @@ class ModelRepositoryImpl implements ModelRepository {
 				modelItems.remove(new KeyImpl(clazz, uuid));
 		}
 		
+	}
+
+
+
+	@Override
+	public void assignProxy(final Object proxy) {
+		this.proxy=proxy;
+		
+	}
+
+
+
+	@Override
+	public Object proxy() {
+		return proxy;
 	}
 
 	
