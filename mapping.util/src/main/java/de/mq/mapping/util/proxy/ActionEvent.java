@@ -13,6 +13,7 @@ public  @interface ActionEvent {
 	
 	String name() default "" ;
 	
+	Class<?> clazz() default  Void.class;
 	
 	boolean startConversation() default false;
 	

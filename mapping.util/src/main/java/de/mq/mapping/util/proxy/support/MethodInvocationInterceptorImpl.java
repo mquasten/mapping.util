@@ -29,12 +29,12 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 	public Object invoke(final Method method, final Object[] args) throws Throwable {
 		annotationExistsGuard(method);
 		try {
-		   final Class<?> clazz =  method.getAnnotation(MethodInvocation.class).clazz();
-		   
+		  
+		  
 		   Object result=null; 
 		   boolean likeAVirgin=true;
 		   for(final ActionEvent action : method.getAnnotation(MethodInvocation.class).actions()){
-			  
+			   final Class<?> clazz = clazz(method.getAnnotation(MethodInvocation.class), action);
 		
 			   if( action.startConversation()){
 				   modelRepository.beanResolver().getBeanOfType(Conversation.class).begin();
@@ -68,6 +68,13 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 			
 		}
 		
+	}
+
+	private Class<?> clazz(final MethodInvocation methodInvocation, final ActionEvent action) {
+		if( action.clazz() != Void.class){
+			   return action.clazz();
+		}
+		return methodInvocation.clazz();
 	}
 
 	private Object handleActionEvent(final Method method, final Object[] args, final Class<?> clazz, final ActionEvent action) throws NoSuchMethodException, IllegalAccessException,
