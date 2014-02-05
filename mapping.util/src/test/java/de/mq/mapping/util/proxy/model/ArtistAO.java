@@ -10,6 +10,7 @@ import de.mq.mapping.util.proxy.GetterProxyCollection;
 import de.mq.mapping.util.proxy.Setter;
 import de.mq.mapping.util.proxy.SetterDomain;
 import de.mq.mapping.util.proxy.support.Number2StringConverter;
+import de.mq.mapping.util.proxy.support.String2IntegerConverter;
 
 /**
  * An abstract class that represents the (web) model of an artist

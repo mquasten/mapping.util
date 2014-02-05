@@ -26,7 +26,6 @@ import de.mq.mapping.util.proxy.NoModel;
 import de.mq.mapping.util.proxy.model.Artist;
 import de.mq.mapping.util.proxy.model.ArtistImpl;
 import de.mq.mapping.util.proxy.model.ProfileAO;
-import de.mq.mapping.util.proxy.model.String2IntegerConverter;
 
 
 public class ModelRepositoryTest {

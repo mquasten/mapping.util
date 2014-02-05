@@ -16,7 +16,6 @@ import de.mq.mapping.util.proxy.ModelRepository;
 import de.mq.mapping.util.proxy.model.Artist;
 import de.mq.mapping.util.proxy.model.ArtistAO;
 import de.mq.mapping.util.proxy.model.ArtistImpl;
-import de.mq.mapping.util.proxy.model.String2IntegerConverter;
 
 public class JSFStringValueTest {
 	
