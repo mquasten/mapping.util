@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.core.convert.converter.Converter;
@@ -44,7 +45,7 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 		
 		final Collection<Object> results = method.getAnnotation(GetterProxyCollection.class).collectionClass().newInstance();
 		
-		final Object value = modelRepository.get(method.getAnnotation(GetterProxyCollection.class).clazz(), method.getAnnotation(GetterProxyCollection.class).name());
+		final Object value = valueFromRepository(method);
 		
 		final UUID uuid =UUID.nameUUIDFromBytes(method.getAnnotation(GetterProxyCollection.class).name().getBytes());
 		
@@ -62,6 +63,8 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 		}
 		
 		final Converter<Object, Class<?>> converter =  proxyClass( method.getAnnotation(GetterProxyCollection.class).proxyClass());
+		
+		
 		
 		for(Object member : (Collection<Object>) value){
 			
@@ -87,6 +90,14 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 		Collections.sort((List<?>) results, comparator);
 		modelRepository.put(method.getAnnotation(GetterProxyCollection.class).clazz(), uuid, results);
 		return results;
+	}
+
+	private Object valueFromRepository(final Method method) {
+		final Object result = modelRepository.get(method.getAnnotation(GetterProxyCollection.class).clazz(), method.getAnnotation(GetterProxyCollection.class).name());
+		if (result instanceof Map) {
+			return ((Map<?,?>) result).entrySet();
+		}
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -14,12 +14,9 @@ public class SimpleReflectionBeanResolverImpl implements BeanResolver{
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getBeanOfType(final Class<? extends T> clazz) {
-	
 		if( ! beans.containsKey(clazz)){
-			
 			beans.put(clazz, newBean(clazz));
-		}
-		
+		}		
 		return (T) beans.get(clazz);
 	}
 
