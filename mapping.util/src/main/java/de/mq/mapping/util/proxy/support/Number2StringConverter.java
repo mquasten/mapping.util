@@ -14,9 +14,12 @@ public class Number2StringConverter implements Converter<Number,String>{
 		 * Sun wasn't able to do this ..
 		 */
 		if ( value == null){
-			return null;
+			return null ;
 		}
-		return String.valueOf(value);
+	
+		return String.valueOf(value); 
+	
+		
 	}
 
 	
