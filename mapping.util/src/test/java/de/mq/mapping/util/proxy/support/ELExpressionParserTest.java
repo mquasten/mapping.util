@@ -66,8 +66,9 @@ public class ELExpressionParserTest {
 		Assert.assertEquals(elExpressionParser, elExpressionParser.withSkipNotReachableOnNullPropertyException(true));
 		@SuppressWarnings("unchecked")
 		final Set<SpelMessage> results = (Set<SpelMessage>) ReflectionTestUtils.getField(elExpressionParser, "skippedException");
-		Assert.assertEquals(1, results.size());
-		Assert.assertEquals(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL, results.iterator().next());
+		Assert.assertEquals(2, results.size());
+		Assert.assertTrue( results.contains(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL));
+		Assert.assertTrue( results.contains(SpelMessage.METHOD_CALL_ON_NULL_OBJECT_NOT_ALLOWED));
 	}
 	
 	@Test

@@ -46,8 +46,10 @@ class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 	@Override
 	public ELExpressionParser withSkipNotReachableOnNullPropertyException(final boolean skipException ) {
 		this.skippedException.remove(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL);
+		this.skippedException.remove(SpelMessage.METHOD_CALL_ON_NULL_OBJECT_NOT_ALLOWED);
 		if(skipException) {
 			this.skippedException.add(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL);
+			this.skippedException.add(SpelMessage.METHOD_CALL_ON_NULL_OBJECT_NOT_ALLOWED);
 		}
 		return this;
 	} 
