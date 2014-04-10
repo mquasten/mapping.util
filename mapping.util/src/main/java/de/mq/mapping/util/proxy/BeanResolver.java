@@ -2,7 +2,7 @@ package de.mq.mapping.util.proxy;
 
 /**
  * Strategy interface for resolving beans.
- * Beans can be created using reflection, cached after taht in Map. 
+ * Beans can be created using reflection, cached after that in Map. 
  * Otherwise beans can be resoved by a ioc container like spring
  * @author Admin
  *
