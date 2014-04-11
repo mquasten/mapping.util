@@ -11,7 +11,7 @@ import de.mq.mapping.util.proxy.NullObjectResolver;
 
 public class NullObjectResolverTest {
 	
-	private static final String ARTIST_NAME = "Kylie Ann Minoge";
+	private static final String ARTIST_NAME = "Kylie Ann Minogue";
 
 
 	@Test
