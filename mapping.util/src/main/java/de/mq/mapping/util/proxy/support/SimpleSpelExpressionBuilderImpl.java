@@ -13,6 +13,8 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
+import de.mq.mapping.util.proxy.NullObjectResolver;
+
 @Component
 @Scope("prototype")
 class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
@@ -22,6 +24,10 @@ class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 	 private Expression expression;
 	 
 	 private Set<SpelMessage> skippedException=new HashSet<>();
+	 
+	 private NullObjectResolver nullObjectResolver = new BasicNullObjectResolverImpl();
+	 
+	 private boolean substitutNullResults = false;
 	 
 	
 	/* (non-Javadoc)
@@ -44,6 +50,13 @@ class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 	}
 	
 	@Override
+	public final ELExpressionParser withNvl(final boolean substitutNullResults){
+		this.substitutNullResults=substitutNullResults;
+		return this;
+	}
+	
+	
+	@Override
 	public ELExpressionParser withSkipNotReachableOnNullPropertyException(final boolean skipException ) {
 		this.skippedException.remove(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL);
 		this.skippedException.remove(SpelMessage.METHOD_CALL_ON_NULL_OBJECT_NOT_ALLOWED);
@@ -52,28 +65,57 @@ class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 			this.skippedException.add(SpelMessage.METHOD_CALL_ON_NULL_OBJECT_NOT_ALLOWED);
 		}
 		return this;
-	} 
+	}
+	
+	
+	@Override
+	public ELExpressionParser withNullObjectResolver(final NullObjectResolver nullObjectResolver) {
+		nullObjectResolverExistsGuard(nullObjectResolver);
+		this.nullObjectResolver=nullObjectResolver;
+		return this;
+	}
+
+	private void nullObjectResolverExistsGuard(final NullObjectResolver nullObjectResolver) {
+		if(nullObjectResolver==null){
+			throw new IllegalArgumentException("NullObjectResolver should be given");
+		}
+	}
 	
 	
 	/* (non-Javadoc)
 	 * @see de.mq.mapping.util.proxy.support.ELExpressionParser#parse()
 	 */
+	
 	@Override
-	public final Object  parse(){
+	public final <T> T parse(final Class<? extends T> resultClass){
 		expressionExistsGuard();
+		
 		try {
-		    return expression.getValue(context);
+		    return  nvl(resultClass, expression.getValue(context));   
 		} catch (final SpelEvaluationException spelEvaluationException){
-			return handleException(spelEvaluationException);
+			return handleException(spelEvaluationException, resultClass);
 		}
+	}
+	@SuppressWarnings("unchecked")
+	private <T> T nvl(final Class<? extends T> resultClass, final Object result) {
+		if(result!=null){
+			return (T) result;
+		}
+		if( ! this.substitutNullResults) {
+			return null;
+		}
+		
+		return  nullObjectResolver.forType(resultClass);
 	}
 
 	
 	
 	
-	private Object handleException(final SpelEvaluationException spelEvaluationException) {
+	
+	
+	private <T> T handleException(final SpelEvaluationException spelEvaluationException, final Class<? extends T> resultClass) {
 		if (skippedException.contains(spelEvaluationException.getMessageCode())){
-			return null;
+			return nullObjectResolver.forType(resultClass);
 		}
 		throw spelEvaluationException;
 	}
@@ -86,6 +128,8 @@ class SimpleSpelExpressionBuilderImpl implements ELExpressionParser {
 			throw new IllegalArgumentException("An expression should be given.");
 		}
 	}
+
+	
 
 	
 

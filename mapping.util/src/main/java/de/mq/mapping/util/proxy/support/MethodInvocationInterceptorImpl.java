@@ -122,8 +122,7 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 			   return convert(managedBean, (Class<? extends Converter<Object, Object>>) parameter.converter());   
 		} 
 		
-		 
-		return convert(modelRepository.beanResolver().getBeanOfType(ELExpressionParser.class).withVariable(ARG, managedBean).withExpression(parameter.el()).withSkipNotReachableOnNullPropertyException(parameter.skipNotReachableOnNullElException()).parse(),   (Class<? extends Converter<Object, Object>>) parameter.converter());
+		return convert(modelRepository.beanResolver().getBeanOfType(ELExpressionParser.class).withVariable(ARG, managedBean).withNvl(parameter.nvl()).withExpression(parameter.el()).withNullObjectResolver(modelRepository.beanResolver().getBeanOfType(parameter.nullObjectResolver())).withSkipNotReachableOnNullPropertyException(parameter.skipNotReachableOnNullElException()).parse(parameter.elResultType()),   (Class<? extends Converter<Object, Object>>) parameter.converter());
 	}
 
 	private Object convert(final Object  result,  Class<? extends Converter<Object,Object>>  clazz) {

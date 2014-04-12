@@ -14,7 +14,7 @@ import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.SpelMessage;
 import org.springframework.test.util.ReflectionTestUtils;
 
-
+import de.mq.mapping.util.proxy.NullObjectResolver;
 import de.mq.mapping.util.proxy.model.ArtistAO;
 
 public class ELExpressionParserTest {
@@ -86,7 +86,7 @@ public class ELExpressionParserTest {
 	public final void parse() {
 		
 		Mockito.when(expression.getValue(evaluationContext)).thenReturn(NAME);
-		Assert.assertEquals(NAME, elExpressionParser.parse());
+		Assert.assertEquals(NAME, elExpressionParser.parse(String.class));
 		Mockito.verify(expression).getValue(evaluationContext);
 		
 	}
@@ -98,20 +98,20 @@ public class ELExpressionParserTest {
 		final Set<SpelMessage> skipped = (Set<SpelMessage>) ReflectionTestUtils.getField(elExpressionParser, "skippedException");
 		skipped.add(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL);
 		Mockito.when(expression.getValue(evaluationContext)).thenThrow(new SpelEvaluationException(SpelMessage.PROPERTY_OR_FIELD_NOT_READABLE_ON_NULL));
-		Assert.assertNull(elExpressionParser.parse());
+		Assert.assertNull(elExpressionParser.parse(String.class));
 	}
 	
 	
 	@Test(expected=SpelEvaluationException.class)
 	public final void parseException() {
 		Mockito.when(expression.getValue(evaluationContext)).thenThrow(new SpelEvaluationException(SpelMessage.ARGLIST_SHOULD_NOT_BE_EVALUATED));
-		elExpressionParser.parse();
+		elExpressionParser.parse(String.class);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public final void parseNoExpression() {
 		final ELExpressionParser elExpressionParser = new SimpleSpelExpressionBuilderImpl();
-		elExpressionParser.parse();
+		elExpressionParser.parse(String.class);
 	}
 	
 	@Test
@@ -119,11 +119,51 @@ public class ELExpressionParserTest {
 		
 		final ArtistAO artist = Mockito.mock(ArtistAO.class);
 		Mockito.when(artist.getName()).thenReturn(NAME);
-		Assert.assertEquals(NAME, new SimpleSpelExpressionBuilderImpl().withVariable(VARIABLE_NAME, artist).withExpression(EL_EXPRESSION).parse());
+		Assert.assertEquals(NAME, new SimpleSpelExpressionBuilderImpl().withVariable(VARIABLE_NAME, artist).withExpression(EL_EXPRESSION).parse(String.class));
 		
 	}
 	
+	@Test
+	public final void withNullObjectResolver() {
+		
+		final ELExpressionParser elExpressionParser = new  SimpleSpelExpressionBuilderImpl();
+		final NullObjectResolver nullObjectResolver = Mockito.mock(NullObjectResolver.class);
+		Assert.assertEquals(elExpressionParser, elExpressionParser.withNullObjectResolver(nullObjectResolver));
+		Assert.assertEquals(nullObjectResolver, ReflectionTestUtils.getField(elExpressionParser, "nullObjectResolver"));
+	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public final void withNullObjectReslverNullGuard() {
+		new  SimpleSpelExpressionBuilderImpl().withNullObjectResolver(null);
+	}
 	
+	@Test
+	public final void parseWithSPELExceptionAndNullObjekt() {
+		final ArtistAO artist =  Mockito.mock(ArtistAO.class); 
+		final ArtistAO duetPartner =  Mockito.mock(ArtistAO.class); 
+		final NullObjectResolver nullObjectResolver = Mockito.mock(NullObjectResolver.class);
+		Mockito.when(nullObjectResolver.forType(ArtistAO.class)).thenReturn(duetPartner);
+		final ELExpressionParser elExpressionParser = new  SimpleSpelExpressionBuilderImpl().withVariable(VARIABLE_NAME, artist).withNullObjectResolver(nullObjectResolver).withSkipNotReachableOnNullPropertyException(true).withExpression("#artist.duetPartner.duetPartner");
+		Assert.assertEquals(duetPartner, elExpressionParser.parse(ArtistAO.class));
+	}
+	
+	@Test
+	public final void parseSustitudeNullResult(){
+		final ArtistAO artist =  Mockito.mock(ArtistAO.class); 
+		final ArtistAO duetPartner =  Mockito.mock(ArtistAO.class); 
+		final NullObjectResolver nullObjectResolver = Mockito.mock(NullObjectResolver.class);
+		Mockito.when(nullObjectResolver.forType(ArtistAO.class)).thenReturn(duetPartner);
+		final ELExpressionParser elExpressionParser = new  SimpleSpelExpressionBuilderImpl().withVariable(VARIABLE_NAME, artist).withNullObjectResolver(nullObjectResolver).withNvl(true).withExpression("#artist.duetPartner");
+		Assert.assertEquals(duetPartner, elExpressionParser.parse(ArtistAO.class));
+		
+	}
+	
+	@Test
+	public final void parseNotSustitudeNullResult(){
+		final ArtistAO artist =  Mockito.mock(ArtistAO.class); 
+	    final ELExpressionParser elExpressionParser = new  SimpleSpelExpressionBuilderImpl().withVariable(VARIABLE_NAME, artist).withNvl(false).withExpression("#artist.duetPartner");
+		Assert.assertNull(elExpressionParser.parse(ArtistAO.class));
+		
+	}
 
 }

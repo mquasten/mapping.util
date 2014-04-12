@@ -38,6 +38,8 @@ public class ExceptionTanslationListInterceptorTest {
 	private final Conversation conversation = Mockito.mock(Conversation.class) ;
 	private final Converter<Object,Object> noConverter = new NoConverter();
 	
+	final BasicNullObjectResolverImpl nullObjectResolver = Mockito.mock(BasicNullObjectResolverImpl.class);
+	
 	@Before
 	public final void setup() {
 		beanResolver=Mockito.mock(BeanResolver.class);
@@ -54,9 +56,15 @@ public class ExceptionTanslationListInterceptorTest {
 		Mockito.when(elExpressionParser.withExpression(Mockito.anyString())).thenReturn(elExpressionParser);
 		Mockito.when(elExpressionParser.withVariable(Mockito.anyString(), Mockito.any())).thenReturn(elExpressionParser);
 		Mockito.when(elExpressionParser.withSkipNotReachableOnNullPropertyException(Mockito.anyBoolean())).thenReturn(elExpressionParser);
+		Mockito.when(elExpressionParser.withNullObjectResolver(nullObjectResolver)).thenReturn(elExpressionParser);
+		Mockito.when(elExpressionParser.withNvl(Mockito.anyBoolean())).thenReturn(elExpressionParser);
+		
+		
 		Mockito.when(beanResolver.getBeanOfType(ELExpressionParser.class)).thenReturn(elExpressionParser);
 		Mockito.when(beanResolver.getBeanOfType(NoConverter.class)).thenReturn((NoConverter) noConverter);
 		Mockito.when(beanResolver.getBeanOfType(Conversation.class)).thenReturn(conversation);
+		
+		
 	}
 	
 	@Test(expected=ClassNotFoundException.class)
@@ -101,8 +109,10 @@ public class ExceptionTanslationListInterceptorTest {
 		final ArtistAO artistAO = Mockito.mock(ArtistAO.class);
 		Mockito.when(beanResolver.getBeanOfType(ArtistAO.class)).thenReturn(artistAO);
 		
+		Mockito.when(beanResolver.getBeanOfType(BasicNullObjectResolverImpl.class)).thenReturn(nullObjectResolver);
+		
 		Artist artist = Mockito.mock(Artist.class);
-		Mockito.when(elExpressionParser.parse()).thenReturn(artist);
+		Mockito.when(elExpressionParser.parse(Artist.class)).thenReturn(artist);
 		
 		interceptor.invoke(method, new Object[]{});
 		Assert.assertEquals(artist.hashCode(), (int) Integer.valueOf(System.getProperty(ArtistControllerImpl.Artist_HASHCODE_KEY)));
