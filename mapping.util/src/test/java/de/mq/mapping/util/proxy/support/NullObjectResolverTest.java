@@ -28,6 +28,13 @@ public class NullObjectResolverTest {
 		Assert.assertEquals(ARTIST_NAME, resolver.forType(Artist.class).name());
 	}
 	
+	@Test
+	public final void postProcess() {
+		final BasicNullObjectResolverImpl  resolver = new BasicNullObjectResolverImpl(); 
+		final Artist artist = Mockito.mock(Artist.class);
+		Assert.assertEquals(artist, resolver.postProcess(artist));
+	}
+	
 	
 	@Test
 	public final void forTypeNull() {
