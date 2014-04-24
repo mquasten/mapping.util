@@ -57,6 +57,9 @@ public abstract class ArtistAO {
 	@GetterDomain(clazz=ArtistImpl.class)
 	public abstract Artist getArtist();
 	
+	@Getter(clazz=ArtistImpl.class, value = "")
+	public abstract String getArtist2() ;
+	
 	
 
 	@GetterProxy(clazz=ArtistImpl.class, name="duetPartner", proxyClass=ArtistSelector.class)

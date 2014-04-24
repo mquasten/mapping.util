@@ -27,6 +27,16 @@ public class BasicGetterInterceptorTest {
 		Assert.assertEquals(VALUE, interceptor.invoke(method, new Object[] { }));
 	}
 	
+	
+	@Test
+	public final void invokeGetDomainObjectWithConverter() throws Throwable {
+		final ModelRepository modelRepository = Mockito.mock(ModelRepository.class);
+		Mockito.when(modelRepository.get(ArtistImpl.class, null, NoConverter.class,  String.class)).thenReturn(VALUE);
+		Interceptor interceptor = new BasicGetterInterceptorImpl(modelRepository); 
+		final Method method = ReflectionUtils.findMethod(ArtistAO.class, "getArtist2");
+		Assert.assertEquals(VALUE, interceptor.invoke(method, new Object[] { }));
+	}
+	
 	@Test(expected=IllegalStateException.class)
 	public final void missingAnnotation() throws Throwable{
 		final ModelRepository modelRepository = Mockito.mock(ModelRepository.class);
