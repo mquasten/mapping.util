@@ -3,10 +3,13 @@ package de.mq.mapping.util.proxy.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mq.mapping.util.proxy.ActionEvent;
 import de.mq.mapping.util.proxy.Getter;
 import de.mq.mapping.util.proxy.GetterDomain;
 import de.mq.mapping.util.proxy.GetterProxy;
 import de.mq.mapping.util.proxy.GetterProxyCollection;
+import de.mq.mapping.util.proxy.MethodInvocation;
+import de.mq.mapping.util.proxy.Parameter;
 import de.mq.mapping.util.proxy.Setter;
 import de.mq.mapping.util.proxy.SetterDomain;
 import de.mq.mapping.util.proxy.support.Number2StringConverter;
@@ -64,6 +67,9 @@ public abstract class ArtistAO {
 
 	@GetterProxy(clazz=ArtistImpl.class, name="duetPartner", proxyClass=ArtistSelector.class)
 	public abstract ArtistAO getDuetPartner2();
+	
+	@MethodInvocation(actions={@ActionEvent(clazz=ArtistControllerImpl.class , params={@Parameter(clazz=ArtistAO.class,proxy=true)})}, clazz = ArtistImpl.class )
+	public abstract void init();
 	
 
 }

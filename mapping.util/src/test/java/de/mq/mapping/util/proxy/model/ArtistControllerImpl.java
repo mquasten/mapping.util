@@ -73,5 +73,11 @@ public class ArtistControllerImpl  implements ArtistController {
 	
 	}
 	
+	
+	public void init(final ArtistAO artistAO){
+		if( artistAO.getName().equalsIgnoreCase("kylie")) {
+			artistAO.setHotScore(10);
+		}
+	}
 
 }

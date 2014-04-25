@@ -118,6 +118,11 @@ public class ExceptionTanslationListInterceptorTest {
 		Assert.assertEquals(artist.hashCode(), (int) Integer.valueOf(System.getProperty(ArtistControllerImpl.Artist_HASHCODE_KEY)));
 	}
 	
+	
+	
+	
+	
+	
 	@Test
 	public final void storeArtistDomain() throws Throwable {
 		final Method method = ArtistControllerAO.class.getMethod("storeDomain" );
@@ -177,6 +182,16 @@ public class ExceptionTanslationListInterceptorTest {
 		
 		Mockito.verify(conversation).begin();
 		Mockito.verify(conversation).end();
+	}
+	
+	@Test
+	public final void proxy() throws Throwable {
+		final Method method = ArtistAO.class.getMethod("init" );
+		Mockito.when(modelRepository.proxy()).thenReturn(artistAO);
+		Mockito.when(artistAO.getName()).thenReturn("Kylie");
+		interceptor.invoke(method, new Object[]{});
+		
+		Mockito.verify(artistAO).setHotScore(10);
 	}
 	
 
