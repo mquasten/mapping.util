@@ -2,8 +2,11 @@ package de.mq.mapping.util.proxy.support;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Map;
 
 import junit.framework.Assert;
+
+import net.sf.cglib.proxy.Factory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -243,6 +246,24 @@ public class BeanConventionCglibProxyFactoryTest {
 
 		Assert.assertTrue((new Date().getTime() - t1) < 5e3);
 		
+	}
+	
+
+	
+	@Test
+	public final void testProxyExistsInMap() {
+		
+		final ModelRepository modelRepository = Mockito.mock(ModelRepository.class);
+		final BeanConventionCGLIBProxyFactory factory = new BeanConventionCGLIBProxyFactory();
+	
+		final Factory factoryMock = Mockito.mock(Factory.class); 
+		@SuppressWarnings("unchecked")
+		final Map<Class<?>, Factory> proxies = (Map<Class<?>, Factory>) ReflectionTestUtils.getField(factory, "proxies");
+		proxies.put(ArtistAO.class, factoryMock);
+		
+		ReflectionTestUtils.invokeMethod(factory, "add2Mapp", ArtistAO.class, modelRepository);
+		
+		Assert.assertEquals(factoryMock, proxies.get(ArtistAO.class));
 	}
 
 }

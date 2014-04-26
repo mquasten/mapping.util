@@ -4,8 +4,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -16,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.ReflectionUtils;
 
 import de.mq.mapping.util.proxy.AOProxyFactory;
@@ -51,6 +55,7 @@ public class BasicGetterCollectionInterceptorTest {
 	     Mockito.when(modelRepository.beanResolver()).thenReturn(beanResolver);
 	     Mockito.when(beanResolver.getBeanOfType(AOProxyFactory.class)).thenReturn(proxyFactory);
 	     Mockito.when(beanResolver.getBeanOfType(NoConverter.class)).thenReturn((NoConverter) noConverter);
+	     Mockito.when(beanResolver.getBeanOfType(EntryConverter.class)).thenReturn((new EntryConverter()) );
 	}
 	
 
@@ -136,11 +141,44 @@ public class BasicGetterCollectionInterceptorTest {
 		Mockito.when(beanResolver.getBeanOfType(Number2StringConverter.class)).thenThrow(new NoSuchBeanDefinitionException(Number2StringConverter.class));
 		Mockito.when(proxyFactory.createProxy(Mockito.any(Class.class), Mockito.any(ModelRepository.class))).thenReturn(videoAO);
 		Set<VideoAO> results = (Set<VideoAO>) interceptor.invoke(method, new Object[] {});
-		System.out.println(results);
+		
 		Assert.assertEquals(1, results.size());
 		Assert.assertEquals(videoAO, results.iterator().next());
 		Assert.assertEquals(HashSet.class, results.getClass());
 		
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public final void invokeMap() throws Throwable {
+		final Interceptor interceptor = new BasicGetterCollectionInterceptorImpl(modelRepository);
+		final Method method = ReflectionUtils.findMethod(AOMock.class, "getVideos4");
+		final Map<String,Video> videos = new HashMap<>();
+		final Video video = Mockito.mock(Video.class);
+		Mockito.when(video.title()).thenReturn("where the wild roses grow");
+		videos.put(video.title(), video);
+		Mockito.when(modelRepository.get(ArtistImpl.class, "videos4")).thenReturn(videos);
+		
+		VideoAO videoAO = Mockito.mock(VideoAO.class);
+		@SuppressWarnings("rawtypes")
+		final ArgumentCaptor<Class> classCaptor = ArgumentCaptor.forClass(Class.class);
+		final ArgumentCaptor<ModelRepository> modelRepositoryCaptor = ArgumentCaptor.forClass(ModelRepository.class);
+		Mockito.when(proxyFactory.createProxy(classCaptor.capture(), modelRepositoryCaptor.capture())).thenReturn(videoAO);
+		
+	
+		final Collection<VideoAO> results = (Collection<VideoAO>) interceptor.invoke(method, new Object[] {});
+		
+	
+		Assert.assertEquals(videoAO, results.iterator().next());
+		
+		Assert.assertEquals(VideoAO.class, classCaptor.getValue());
+		ModelRepository modelRepository =  modelRepositoryCaptor.getValue();
+		Assert.assertEquals(ModelRepositoryImpl.class, modelRepository.getClass());
+		final Map<?,Object> items = (Map<?, Object>) ReflectionTestUtils.getField(modelRepository, "modelItems");
+		Assert.assertEquals(1, items.size());
+		Assert.assertEquals(video, items.values().iterator().next());
 	}
 	
 	
@@ -180,6 +218,8 @@ public class BasicGetterCollectionInterceptorTest {
 		Assert.assertEquals(artist2, modellCapture.getAllValues().get(1).get(ArtistImpl.class));
 		
 	}
+	
+	
 
 }
 
@@ -192,4 +232,20 @@ interface AOMock {
 	
 	@GetterProxyCollection(clazz = ArtistImpl.class, name = "videos3", proxyClass = Number2StringConverter.class, collectionClass = HashSet.class)
 	public abstract Set<VideoAO> getVideos3();
+	
+	@GetterProxyCollection(collectionClass=ArrayList.class, name="videos4",proxyClass=VideoAO.class, clazz = ArtistImpl.class, converter=EntryConverter.class)
+	public abstract Collection<VideoAO> getVideos4();
 }
+
+
+class EntryConverter implements Converter<Map.Entry<?, Video>, Video> {
+
+	@Override
+	public Video convert(Entry<?, Video> source) {
+		return source.getValue();
+	}
+
+	
+	
+}
+

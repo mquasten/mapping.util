@@ -131,10 +131,6 @@ public class MethodInvocationInterceptorImpl implements Interceptor {
 
 	private Object getBean(final Object[] args, final Parameter parameter) {
 		
-		
-		System.out.println(args.length);
-		System.out.println(parameter);
-		
 		if( parameter.originIndex() >=0 ){
 			return args[parameter.originIndex()];
 			 

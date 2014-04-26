@@ -93,6 +93,7 @@ class BasicGetterCollectionInterceptorImpl implements Interceptor {
 	}
 
 	private Object valueFromRepository(final Method method) {
+		
 		final Object result = modelRepository.get(method.getAnnotation(GetterProxyCollection.class).clazz(), method.getAnnotation(GetterProxyCollection.class).name());
 		if (result instanceof Map) {
 			return ((Map<?,?>) result).entrySet();

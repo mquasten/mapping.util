@@ -52,13 +52,9 @@ public class BeanConventionCGLIBProxyFactory  extends AbstractBeanConventionProx
 
 	private synchronized Object add2Mapp(final Class<?> targetClass, final ModelRepository modelRepository) {
 		if (!proxies.containsKey(targetClass)) {
-			
-			
 			final Enhancer enhancer = new Enhancer();
 			enhancer.setSuperclass(targetClass);
 			enhancer.setCallbackFilter(createCallBackfilter());
-
-          
 			enhancer.setCallbacks(newCallBacks(modelRepository));
 			proxies.put(targetClass, (Factory) enhancer.create());
 		}

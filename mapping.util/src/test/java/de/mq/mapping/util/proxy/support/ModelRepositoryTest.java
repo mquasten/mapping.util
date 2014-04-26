@@ -518,7 +518,16 @@ public class ModelRepositoryTest {
 		
 	}
 	
+	@Test
+	public final void testProxy() {
+		final ModelRepository modelRepository = new ModelRepositoryImpl(beanResolver);
+		final WebMock webMock = Mockito.mock(WebMock.class);
+		modelRepository.assignProxy(webMock);
+		Assert.assertEquals(webMock, modelRepository.proxy());
+	}
+	
 }
+
 
 
 abstract interface WebMock {

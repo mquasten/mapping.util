@@ -44,5 +44,6 @@ public abstract  class ProfileAO  {
 	
 	@GetterProxyCollection(collectionClass=ArrayList.class,name="friends",proxyClass=ArtistAO.class)
 	public abstract Collection<ArtistAO> getFriends();
+	
 
 }
