@@ -8,7 +8,7 @@ import org.springframework.core.convert.converter.Converter;
 public class String2DoubleConverterTest {
 	
 	private static final double AMOUNT = 47.11d;
-	private Converter<String, Double> converter = new String2DoubleConverter();
+	private final Converter<String, Double> converter = new String2DoubleConverter();
 	
 	@Test
 	public final void convert() {
