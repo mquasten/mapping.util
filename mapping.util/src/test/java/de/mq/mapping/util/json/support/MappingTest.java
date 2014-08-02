@@ -142,7 +142,7 @@ public class MappingTest {
 	
 	@Test
 	public final void rowNoMap() {
-		Mapping parent = new Mapping("rows" , null, "artist");
+		final Mapping parent = new Mapping("rows" , null, "artist");
 		final Collection<Mapping> childs = new ArrayList<>();
 		childs.add( new Mapping(null, "value"));
 		parent.assignChilds(childs);
@@ -190,7 +190,7 @@ public class MappingTest {
 	parent.assignChilds(childs);
 	
 	MapBasedResponse mapBasedResponse = new BasicMapBasedResult();
-	System.out.println(parent.map(mapBasedResponse, SimpleMapBasedResultRowImpl.class, "dontLetMeGetMe", listResult()));
+	Assert.assertTrue(parent.map(mapBasedResponse, SimpleMapBasedResultRowImpl.class, "dontLetMeGetMe", listResult()).isEmpty());
 	
 	}
 	
