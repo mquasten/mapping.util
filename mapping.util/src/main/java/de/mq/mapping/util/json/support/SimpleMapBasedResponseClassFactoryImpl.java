@@ -12,13 +12,20 @@ import net.sf.cglib.proxy.NoOp;
 
 import org.springframework.util.Assert;
 
+import de.mq.mapping.util.json.MapBasedResponseClassFactory;
+import de.mq.mapping.util.json.MapBasedResultBuilder;
 
 
-public class SimpleMapBasedClassFactoryImpl {
+
+public class SimpleMapBasedResponseClassFactoryImpl implements MapBasedResponseClassFactory {
 	
 	
 	
-	public final Class<MapBasedResponse> createClass(final Collection<Mapping<MapBasedResultRow>> mappings) {
+	/* (non-Javadoc)
+	 * @see de.mq.mapping.util.json.support.MapBasedClassFactory#createClass(java.util.Collection)
+	 */
+	@Override
+	public final Class<MapBasedResponse> createClass(final Collection<?> mappings) {
 		final Enhancer enhancer = new Enhancer();
 		enhancer.setSuperclass(AbstractMapBasedResult.class);
 		enhancer.setCallbackFilter(callBackFilter());
@@ -30,7 +37,10 @@ public class SimpleMapBasedClassFactoryImpl {
 		return clazz;
 	}
 
-
+	@Override
+	public final MapBasedResultBuilder mappingBuilder()  {
+		return new MapBasedResultBuilderImpl();
+	}
 
 
 	private CallbackFilter callBackFilter() {
@@ -46,21 +56,27 @@ public class SimpleMapBasedClassFactoryImpl {
 			}};
 	}
 	
-	private Callback[] callbacks(final Collection<Mapping<MapBasedResultRow>> mappings) {
+	private Callback[] callbacks(final Collection<?> mappings) {
 		return new Callback[]  { NoOp.INSTANCE , new MethodInterceptor() {
 
 			
+			@SuppressWarnings("unchecked")
 			@Override
 			public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
 				Assert.isInstanceOf(AbstractMapBasedResult.class, obj, "Wrong class "+ obj.getClass() + ", expected: "+ AbstractMapBasedResult.class.getName() );
 				final AbstractMapBasedResult target = (AbstractMapBasedResult)obj;
-				target.assignRowClass(SimpleMapBasedResultRowImpl.class);
+				
 				Assert.notEmpty(mappings);
-				target.assignMappings(mappings);		
+				target.assign( (Collection<Mapping>) mappings);		
 				
 				
 				return null;
 			}}};
 	}
+
+
+
+
+	
 
 }

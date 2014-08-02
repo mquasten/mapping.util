@@ -3,7 +3,7 @@ package de.mq.mapping.util.json.support;
 import de.mq.mapping.util.json.FieldMapping;
 
 
-public class PetPriceKey {
+class PetPriceKey {
 	
 	
 	@FieldMapping

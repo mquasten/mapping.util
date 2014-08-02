@@ -16,10 +16,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
-public class Mapping<T>  {
+class Mapping  {
 	
 	
-	final Set<Mapping<T>> childs = new HashSet<>();
+	final Set<Mapping> childs = new HashSet<>();
 	
 	
 	private  final  String key ;
@@ -30,7 +30,7 @@ public class Mapping<T>  {
 	
 
 	
-	public Mapping(final String key, final String field, final String ... paths) {
+	Mapping(final String key, final String field, final String ... paths) {
 		this.key=key;
 		this.field=field;
 		//this.clazz=clazz;
@@ -43,11 +43,8 @@ public class Mapping<T>  {
 		}
 	}
 	
-	public Mapping(final Mapping<T> parent,  final String field, final String ... paths) {
-		this.key=null;
-		this.field=field;
-		assignPaths(paths);
-		parent.childs.add(this);
+	void assignChilds(final Collection<Mapping> childs) {
+		this.childs.addAll(childs);
 	}
    
 	private boolean matchesForParent(final String key) {
@@ -120,9 +117,9 @@ public class Mapping<T>  {
 	
 	
 
-	private T mapSubRow(final Class<? extends T> clazz, final Object row /*, final Object result*/) {
-		final T result = newRow((Class<? extends T>) clazz);
-		for (final Mapping<T>  child : childs) {
+	private  MapBasedResultRow mapSubRow(final Class<? extends MapBasedResultRow> clazz, final Object row /*, final Object result*/) {
+		final MapBasedResultRow result = newRow( clazz);
+		for (final Mapping   child : childs) {
 			child.mapRow(clazz, row, result);
 		}
 
@@ -130,24 +127,24 @@ public class Mapping<T>  {
 	}
 
 
-   private Collection<T> mapSubRows(final Class<? extends T> rowClass, final Collection<Map<String, Object>> rows ) {
-		final Collection<T> results = new ArrayList<>();
+   private Collection<MapBasedResultRow> mapSubRows(final Class<? extends MapBasedResultRow> rowClass, final Collection<Map<String, Object>> rows ) {
+		final Collection<MapBasedResultRow> results = new ArrayList<>();
 		for (final Object row : rows) {
 			//final T result = newRow();
-			final T result =  mapSubRow(rowClass, row);
+			final MapBasedResultRow result =  mapSubRow(rowClass, row);
 			results.add(result);
 		}
 		return results;
 	}
 
-private T newRow(final Class<? extends T> clazz)  {
+private MapBasedResultRow newRow(final Class<? extends MapBasedResultRow> clazz)  {
 	
 		return BeanUtils.instantiateClass(clazz);
 
 }
 	
 	@SuppressWarnings("unchecked")
-	public Collection<T> map(final Object parent, final Class<? extends T> rowClass, final String key, final Object value) {
+	Collection<MapBasedResultRow> map(final Object parent, final Class<? extends MapBasedResultRow> rowClass, final String key, final Object value) {
 	
 		if (!matchesForParent(key)) {
 		  return new ArrayList<>(); 

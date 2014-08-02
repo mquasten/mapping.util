@@ -17,7 +17,8 @@ import org.springframework.util.ReflectionUtils;
 
 
 
-public abstract class AbstractMapBasedResult extends HashMap<String, Object> implements MapBasedResponse {
+
+abstract class AbstractMapBasedResult extends HashMap<String, Object> implements MapBasedResponse {
 
 	/**
 	 * Serializeable
@@ -46,9 +47,9 @@ public abstract class AbstractMapBasedResult extends HashMap<String, Object> imp
 	private Object description;
 
 	
-	private Collection<Mapping<MapBasedResultRow>> mappings = new ArrayList<>();
+	protected Collection<Mapping> mappings = new ArrayList<>();
 
-	private Class<? extends MapBasedResultRow> rowClass;
+	private Class<? extends MapBasedResultRow> rowClass=SimpleMapBasedResultRowImpl.class;
 
 	
 	final ConfigurableConversionService conversionService = new DefaultConversionService();
@@ -59,29 +60,12 @@ public abstract class AbstractMapBasedResult extends HashMap<String, Object> imp
 
 	protected   abstract void configure() ;
 
-	protected Mapping<MapBasedResultRow> assignParentResultMapping(final String node, String... paths) {
-		final Mapping<MapBasedResultRow> result = new Mapping<MapBasedResultRow>(node, null, paths);
-		mappings.add(result);
-		return result;
-	}
-
-	protected void assignParentFieldMapping(final String node, final String field, String... paths) {
-		mappings.add(new Mapping<MapBasedResultRow>(node, field, paths));
-	}
-
-	protected void assignChildRowMapping(Mapping<MapBasedResultRow> parent, final String field, String... paths) {
-		new Mapping<MapBasedResultRow>(parent, field, paths);
-	}
-
-	protected  void assignRowClass(final Class<? extends MapBasedResultRow> rowClass) {
-		this.rowClass = rowClass;
+	
+	void assign(Collection<Mapping> mappings) {
+		this.mappings.clear();
+		this.mappings.addAll(mappings);
 	}
 	
- 	void assignMappings(final Collection<Mapping<MapBasedResultRow>> mappings) {
- 		this.mappings.clear();
- 		this.mappings.addAll(mappings);
- 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -171,7 +155,7 @@ public abstract class AbstractMapBasedResult extends HashMap<String, Object> imp
         
 		Assert.notNull(rowClass);
 
-		for (final Mapping<MapBasedResultRow> mapping : mappings) {
+		for (final Mapping mapping : mappings) {
 			results.addAll(mapping.map(this, rowClass, key, value));
 		}
 

@@ -11,10 +11,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import de.mq.mapping.util.json.support.AbstractMapBasedResult;
 import de.mq.mapping.util.json.support.MapBasedResponse;
 import de.mq.mapping.util.json.support.MapBasedResultRow;
-import de.mq.mapping.util.json.support.Mapping;
 import de.mq.mapping.util.json.support.PetPriceKey;
 
 
@@ -31,11 +29,11 @@ public class MapBasedResponseTest {
 		
 		final MapBasedResponse mapBasedResponse = new BasicMapBasedResult();
 		
-		final Collection<Mapping<?>> mappings =  mappingsField(mapBasedResponse);
+		final Collection<Mapping> mappings =  mappingsField(mapBasedResponse);
 	    Assert.assertEquals(1, mappings.size());
 	    Assert.assertEquals("rows", ReflectionTestUtils.getField(mappings.iterator().next(), "key"));
-	    Assert.assertEquals(2,  ((Collection<Mapping<?>>) ReflectionTestUtils.getField(mappings.iterator().next(), "childs")).size());
-	    for(final Mapping<?> child : (Collection<Mapping<?>>) ReflectionTestUtils.getField(mappings.iterator().next(), "childs")) {
+	    Assert.assertEquals(2,  ((Collection<Mapping>) ReflectionTestUtils.getField(mappings.iterator().next(), "childs")).size());
+	    for(final Mapping child : (Collection<Mapping>) ReflectionTestUtils.getField(mappings.iterator().next(), "childs")) {
 	    	
 	    	Assert.assertEquals(1, ((Collection<?>)ReflectionTestUtils.getField(child, "paths")).size());
 	    	final Object field = ReflectionTestUtils.getField(child, "field");
@@ -51,8 +49,8 @@ public class MapBasedResponseTest {
 		
 	}
 	@SuppressWarnings("unchecked")
-	private Collection<Mapping<?>> mappingsField(final MapBasedResponse mapBasedResponse) {
-		return  (Collection<Mapping<?>>) ReflectionTestUtils.getField(mapBasedResponse, "mappings");
+	private Collection<Mapping> mappingsField(final MapBasedResponse mapBasedResponse) {
+		return  (Collection<Mapping>) ReflectionTestUtils.getField(mapBasedResponse, "mappings");
 	}
 	@Test
 	@SuppressWarnings("unchecked")
@@ -66,14 +64,14 @@ public class MapBasedResponseTest {
 
 			@Override
 			protected void configure() {
-				super.assignParentFieldMapping("paging", "info", "start");
+				mappings.add(new Mapping("paging", "info", "start"));
 				
 			}};
 			
 		
-			final Collection<Mapping<?>> mappings =  mappingsField(mapBasedResponse);
+			final Collection<Mapping> mappings =  mappingsField(mapBasedResponse);
 			Assert.assertEquals(1, mappings.size());
-			Assert.assertEquals(0,  ((Collection<Mapping<?>>) ReflectionTestUtils.getField(mappings.iterator().next(), "childs")).size());
+			Assert.assertEquals(0,  ((Collection<Mapping>) ReflectionTestUtils.getField(mappings.iterator().next(), "childs")).size());
 			
 			Assert.assertEquals(1, ((Collection<?>)ReflectionTestUtils.getField(mappings.iterator().next(), "paths")).size());
 	    	Assert.assertEquals("start", ((Collection<?>)ReflectionTestUtils.getField(mappings.iterator().next(), "paths")).iterator().next());
@@ -146,10 +144,10 @@ public class MapBasedResponseTest {
 	public final void put() {
 		final BasicMapBasedResult mapBasedResponse = new BasicMapBasedResult() ;
 		
-		final Collection<Mapping<?>> mappings = mappingsField(mapBasedResponse);
+		final Collection<Mapping> mappings = mappingsField(mapBasedResponse);
 		mappings.clear();
-		@SuppressWarnings("unchecked")
-		final Mapping<MapBasedResultRow> mapping = Mockito.mock(Mapping.class);
+		
+		final Mapping mapping = Mockito.mock(Mapping.class);
 		mappings.add(mapping);
 		
 		final Map<?,?> values = new HashMap<>();
@@ -172,10 +170,14 @@ public class MapBasedResponseTest {
 
 		@Override
 		protected void configure() {
-			assignRowClass(SimpleMapBasedResultRowImpl.class);
-			Mapping<MapBasedResultRow> parent = assignParentResultMapping("rows");
-			assignChildRowMapping(parent, "value", "value");
-			assignChildRowMapping(parent, "key", "key");
+			
+			final Mapping parent = new Mapping("rows", null);
+			final Collection<Mapping> childs = new ArrayList<>();
+			childs.add(new Mapping(null, "value", "value"));
+			childs.add(new Mapping(null, "key", "key"));
+			parent.assignChilds(childs);
+			
+			mappings.add(parent);
 			//assignChildRowMapping(parent, "id", "id");
 			//assignParentFieldMapping("total_rows",  "info" );
 			//assignParentFieldMapping("offset",  "description" );

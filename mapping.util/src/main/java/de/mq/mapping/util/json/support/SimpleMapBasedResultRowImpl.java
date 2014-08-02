@@ -3,24 +3,24 @@ package de.mq.mapping.util.json.support;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.convert.support.ConfigurableConversionService;
-import org.springframework.core.convert.support.ConversionServiceFactory;
 import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.core.convert.support.GenericConversionService;
 
 
 
-@SuppressWarnings("unused")
-public class SimpleMapBasedResultRowImpl implements MapBasedResultRow {
+class SimpleMapBasedResultRowImpl implements MapBasedResultRow {
 
 	private Object key;
 
 	private Object value;
 
 	private String id;
+	
+	SimpleMapBasedResultRowImpl() {
+		
+	}
 	
 
 	final ConfigurableConversionService conversionService = new DefaultConversionService();
