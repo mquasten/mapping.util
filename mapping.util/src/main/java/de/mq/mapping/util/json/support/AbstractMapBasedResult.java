@@ -53,7 +53,7 @@ public abstract class AbstractMapBasedResult extends HashMap<String, Object> imp
 	
 	final ConfigurableConversionService conversionService = new DefaultConversionService();
 
-	public AbstractMapBasedResult() {
+	protected AbstractMapBasedResult() {
 		configure();
 	}
 
@@ -73,9 +73,14 @@ public abstract class AbstractMapBasedResult extends HashMap<String, Object> imp
 		new Mapping<MapBasedResultRow>(parent, field, paths);
 	}
 
-	protected void assignRowClass(final Class<? extends MapBasedResultRow> rowClass) {
+	protected  void assignRowClass(final Class<? extends MapBasedResultRow> rowClass) {
 		this.rowClass = rowClass;
 	}
+	
+ 	void assignMappings(final Collection<Mapping<MapBasedResultRow>> mappings) {
+ 		this.mappings.clear();
+ 		this.mappings.addAll(mappings);
+ 	}
 
 	/*
 	 * (non-Javadoc)
@@ -208,5 +213,7 @@ public abstract class AbstractMapBasedResult extends HashMap<String, Object> imp
 			throw new IllegalStateException(ex);
 		}
 	}
+	
+	
 
 }
