@@ -28,8 +28,6 @@ public class MapBasedClassFactoryTest {
 		
 		final Class<MapBasedResponse> clazz = mapBasedClassFactory.createClass(mappings);
 		
-		System.out.println(clazz);
-		System.out.println(mapBasedClassFactory.createClass(mappings));
 		
 		final MapBasedResponse result = clazz.newInstance();
 		Assert.assertTrue(result instanceof AbstractMapBasedResult);
