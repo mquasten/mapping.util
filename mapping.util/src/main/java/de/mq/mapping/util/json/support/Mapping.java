@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,9 @@ import java.util.Set;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
+
+
 
 class Mapping  {
 	
@@ -158,5 +162,45 @@ private MapBasedResultRow newRow(final Class<? extends MapBasedResultRow> clazz)
         this.assignField(parent.getClass(), parent , value); 
         return new ArrayList<>();
 	}
+
+	@Override
+	public int hashCode() {
+		return toMap(this).hashCode();
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof Mapping)) {
+			return false;
+			
+		}
+		return toMap(this).equals(toMap((Mapping) obj));
+	}
+
+	private  Map<String,Object> toMap(final Mapping mapping) {
+		final Map<String,Object> results =  new HashMap<>();
+		if( StringUtils.hasText(mapping.key) ) {
+			results.put("key", mapping.key);
+		}
+		if(StringUtils.hasText(mapping.field)){
+			results.put("field", mapping.field);
+		}
+		if(!mapping.paths.isEmpty()){
+			results.put("paths", StringUtils.collectionToCommaDelimitedString(mapping.paths));
+		}
+		if(!mapping.childs.isEmpty()){
+			results.put("childs", mapping.childs.hashCode());
+		}
+		return results;
+	}
+	
+	String key() {
+		if(StringUtils.hasText(field)){
+			return field;
+		}
+		return "parent";
+	}
+	
+	
 	
 }
