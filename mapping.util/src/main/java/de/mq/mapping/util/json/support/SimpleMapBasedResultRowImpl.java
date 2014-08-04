@@ -7,8 +7,7 @@ import java.util.Map;
 
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
-
-
+import org.springframework.util.Assert;
 
 class SimpleMapBasedResultRowImpl implements MapBasedResultRow {
 
@@ -17,15 +16,13 @@ class SimpleMapBasedResultRowImpl implements MapBasedResultRow {
 	private Object value;
 
 	private String id;
-	
+
 	SimpleMapBasedResultRowImpl() {
-		
+
 	}
-	
 
 	final ConfigurableConversionService conversionService = new DefaultConversionService();
 
-	
 	private MapCopyOperations mapCopyTemplate = new MapCopyTemplate();
 
 	/*
@@ -43,7 +40,7 @@ class SimpleMapBasedResultRowImpl implements MapBasedResultRow {
 	 * 
 	 * @see de.mq.merchandise.order.support.CouchViewResultRow#singleKey()
 	 */
-	
+
 	@Override
 	public final <T> T singleKey(Class<? extends T> clazz) {
 
@@ -51,13 +48,9 @@ class SimpleMapBasedResultRowImpl implements MapBasedResultRow {
 			throw new IllegalArgumentException("Key is a Composed Key");
 		}
 
-		
 		return conversionService.convert(key, clazz);
-		
-		
+
 	}
-	
-	
 
 	/*
 	 * (non-Javadoc)
@@ -102,38 +95,38 @@ class SimpleMapBasedResultRowImpl implements MapBasedResultRow {
 		composedValueGuard();
 		return Collections.unmodifiableMap((Map<String, ? extends Object>) value);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public final  <T> Collection<T> collectionValue(Class<? extends T> targetClass) {
+	public final <T> Collection<T> collectionValue(Class<? extends T> targetClass) {
 		valueCollectionGuard();
 		return (Collection<T>) handleCollectionResult(targetClass, value);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public final  <T> Collection<T> collectionKey(Class<? extends T> targetClass) {
+	public final <T> Collection<T> collectionKey(Class<? extends T> targetClass) {
 		keyCollectionGuard();
 		return (Collection<T>) handleCollectionResult(targetClass, key);
 	}
 
-	
-	private  Collection<?> handleCollectionResult(Class<?> targetClass, final Object collection) {
-	
-		if( instanceOfMap(targetClass) ) {
+	@SuppressWarnings("unchecked")
+	private Collection<?> handleCollectionResult(Class<?> targetClass, final Object collection) {
+
+		if (instanceOfMap(targetClass)) {
 			return Collections.unmodifiableCollection((Collection<?>) collection);
 		}
-       
-        final Collection<Object> results = new ArrayList<>();
-        for(final Object row : (Collection< ? >) collection){
-        	if( getClass().getClassLoader().equals(targetClass.getClassLoader())) {
-        		results.add(row);
-        		continue;
-        	}
-        	results.add(conversionService.convert(row, targetClass));
-        }
-		
-		
+
+		final Collection<Object> results = new ArrayList<>();
+		for (final Object row : (Collection<?>) collection) {
+			if (getClass().getClassLoader().equals(targetClass.getClassLoader())) {
+				Assert.isInstanceOf(Map.class, row, "Row should be a Map");
+				results.add(mapCopyTemplate.createShallowCopyFieldsFromMap(targetClass, (Map<String, ? extends Object>) row));
+				continue;
+			}
+			results.add(conversionService.convert(row, targetClass));
+		}
+
 		return Collections.unmodifiableCollection(results);
 	}
 
@@ -181,15 +174,13 @@ class SimpleMapBasedResultRowImpl implements MapBasedResultRow {
 		return mapCopyTemplate.createShallowCopyFieldsFromMap(targetClass, composedKey());
 	}
 
-	
-	
 	private <T> boolean instanceOfMap(final Class<? extends T> targetClass) {
 		try {
-		targetClass.asSubclass(Map.class);
-		return true;
-		} catch (final ClassCastException ce){
+			targetClass.asSubclass(Map.class);
+			return true;
+		} catch (final ClassCastException ce) {
 			return false;
 		}
 	}
-	
+
 }

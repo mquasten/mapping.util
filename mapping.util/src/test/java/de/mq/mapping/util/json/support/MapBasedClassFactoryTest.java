@@ -24,7 +24,7 @@ public class MapBasedClassFactoryTest {
 		Collection<Mapping> mappings = new ArrayList<>();
 		mappings.add(parent);
 		
-		
+
 		
 		final Class<MapBasedResponse> clazz = mapBasedClassFactory.createClass(mappings);
 		
