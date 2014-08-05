@@ -3,6 +3,7 @@ package de.mq.mapping.util.json.support;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -10,10 +11,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import de.mq.mapping.util.json.support.MapBasedResponse;
-import de.mq.mapping.util.json.support.MapBasedResultRow;
-import de.mq.mapping.util.json.support.PetPriceKey;
 
 
 
@@ -163,6 +160,66 @@ public class MapBasedResponseTest {
 		
 			
 	}
+	
+	@Test
+	public final void result() {
+		final BasicMapBasedResult mapBasedResult = new BasicMapBasedResult() ;
+		final MapBasedResultRow row = Mockito.mock(MapBasedResultRow.class);
+		final Map<String,Object> prices = new HashMap<>();
+		prices.put("quality", QUALITY);
+		prices.put("unit", UNIT);
+		
+		Mockito.when(row.composedValue()).thenReturn(prices);
+		rowField(mapBasedResult).add(row);
+		
+		
+		@SuppressWarnings("rawtypes")
+		final List<Map> results =  mapBasedResult.result(Map.class);
+		Assert.assertEquals(1,results.size());
+		Assert.assertEquals(prices, results.iterator().next());
+	}
+	
+	@Test
+	public final void resultClass() {
+		final BasicMapBasedResult mapBasedResult = new BasicMapBasedResult() ;
+		final MapBasedResultRow row = Mockito.mock(MapBasedResultRow.class);
+		PetPriceKey petPriceKey = Mockito.mock(PetPriceKey.class);
+		
+		Mockito.when(row.composedValue(PetPriceKey.class)).thenReturn(petPriceKey);
+		rowField(mapBasedResult).add(row);
+	
+		final List<PetPriceKey> results =  mapBasedResult.result(PetPriceKey.class);
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(petPriceKey, results.iterator().next());
+	}
+	
+	@Test
+	public final void resultString() {
+		final BasicMapBasedResult mapBasedResult = new BasicMapBasedResult() ;
+		final MapBasedResultRow row = Mockito.mock(MapBasedResultRow.class);
+		Mockito.when(row.singleValue(String.class)).thenReturn(QUALITY);
+		rowField(mapBasedResult).add(row);
+		
+		final Collection<String> results =  mapBasedResult.result(String.class);
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(QUALITY, results.iterator().next());
+	}
+	
+	
+	@Test
+	public final void assignMapping() {
+		final BasicMapBasedResult mapBasedResult = new BasicMapBasedResult() ;
+		Collection<Mapping> mappings = new ArrayList<>();
+		final Mapping mapping = Mockito.mock(Mapping.class);
+		mappings.add(mapping);
+		mapBasedResult.assign(mappings);
+		
+		@SuppressWarnings("unchecked")
+		final Collection<Mapping> results = (Collection<Mapping>) ReflectionTestUtils.getField(mapBasedResult, "mappings");
+	    Assert.assertEquals(1, results.size());
+	    Assert.assertEquals(mapping, results.iterator().next());
+	}
+	
 	
 	class BasicMapBasedResult extends AbstractMapBasedResult {
 
