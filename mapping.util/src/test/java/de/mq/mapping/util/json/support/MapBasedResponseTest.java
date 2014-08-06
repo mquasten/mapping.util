@@ -8,18 +8,26 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import de.mq.mapping.util.json.support.MapBasedResponse.InfoField;
+
+
 
 
 
 public class MapBasedResponseTest {
 	
+	private static final String STATUS_OK = "OK";
 	private static final String QUALITY = "platinium";
 	private static final String UNIT = "private date";
 	private static final String SINGLE_VALUE = "19680528";
 
+	
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public final void testMapping() {
@@ -220,10 +228,38 @@ public class MapBasedResponseTest {
 	    Assert.assertEquals(mapping, results.iterator().next());
 	}
 	
+	@Test
+	public final void field() {
+		final BasicMapBasedResult mapBasedResult = new BasicMapBasedResult() ;
+		ReflectionTestUtils.setField(mapBasedResult, InfoField.Status.field(), STATUS_OK);
+		
+		Assert.assertEquals(STATUS_OK, mapBasedResult.field(InfoField.Status, String.class));
+		
+	}
+	
+	@Test
+	public final void fieldClass(){
+		final BasicMapBasedResult mapBasedResult = new BasicMapBasedResult() ;
+		final Map<String,Object> values = new HashMap<>();
+		values.put("quality", QUALITY);
+		values.put("unit", UNIT);
+		ReflectionTestUtils.setField(mapBasedResult, InfoField.Info.field(), values);
+		final PetPriceKey result = mapBasedResult.field(InfoField.Info, PetPriceKey.class);
+		Assert.assertEquals(QUALITY, result.quality);
+		Assert.assertEquals(UNIT, result.unit);
+		
+	}
+	
+	
+	
+	
+	
 	
 	class BasicMapBasedResult extends AbstractMapBasedResult {
 
 		private static final long serialVersionUID = 1L;
+		final String message="";
+	
 
 		@Override
 		protected void configure() {
@@ -242,6 +278,7 @@ public class MapBasedResponseTest {
 		}
 		
 	}
+	
 	
 
 }

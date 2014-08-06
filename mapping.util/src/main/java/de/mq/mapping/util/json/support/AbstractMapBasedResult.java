@@ -180,6 +180,7 @@ abstract class AbstractMapBasedResult extends HashMap<String, Object> implements
 	public final <T> T field(final InfoField infoField, Class<? extends T> targetClass) {
 
 		final Field field = ReflectionUtils.findField(getClass(), infoField.field());
+		Assert.notNull(field, "Field not found: " + infoField.field());
 		field.setAccessible(true);
 		final Object result = valueFromField(field);
 		if (getClass().getClassLoader().equals(targetClass.getClassLoader())) {
@@ -192,6 +193,7 @@ abstract class AbstractMapBasedResult extends HashMap<String, Object> implements
 
 	private Object valueFromField(Field field) {
 		try {
+			
 			return field.get(this);
 		} catch (Exception ex) {
 			throw new IllegalStateException(ex);
