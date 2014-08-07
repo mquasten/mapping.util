@@ -181,8 +181,8 @@ abstract class AbstractMapBasedResult extends HashMap<String, Object> implements
 
 		final Field field = ReflectionUtils.findField(getClass(), infoField.field());
 		Assert.notNull(field, "Field not found: " + infoField.field());
-		field.setAccessible(true);
-		final Object result = valueFromField(field);
+		ReflectionUtils.makeAccessible(field);
+		final Object result = ReflectionUtils.getField(field, this);
 		if (getClass().getClassLoader().equals(targetClass.getClassLoader())) {
 
 			return mapCopyTemplate.createShallowCopyFieldsFromMap(targetClass, (Map<String, Object>) result);
@@ -191,14 +191,7 @@ abstract class AbstractMapBasedResult extends HashMap<String, Object> implements
 		return conversionService.convert(result, targetClass);
 	}
 
-	private Object valueFromField(Field field) {
-		try {
-			
-			return field.get(this);
-		} catch (Exception ex) {
-			throw new IllegalStateException(ex);
-		}
-	}
+	
 	
 	
 

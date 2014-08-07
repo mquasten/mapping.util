@@ -1,5 +1,6 @@
 package de.mq.mapping.util.json.support;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+
+
 
 import de.mq.mapping.util.json.support.MapBasedResponse.InfoField;
 
@@ -249,7 +252,6 @@ public class MapBasedResponseTest {
 		Assert.assertEquals(UNIT, result.unit);
 		
 	}
-	
 	
 	
 	
