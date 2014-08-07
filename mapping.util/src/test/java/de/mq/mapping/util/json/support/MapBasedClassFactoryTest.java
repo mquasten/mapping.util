@@ -2,6 +2,8 @@ package de.mq.mapping.util.json.support;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
 
 
 
@@ -19,17 +21,13 @@ public class MapBasedClassFactoryTest {
 	@Test
 	public final void createClass() throws InstantiationException, IllegalAccessException {
 		Collection<Mapping> mappings = createMappings();
-		
-
-		
 		final Class<MapBasedResponse> clazz = mapBasedClassFactory.createClass(mappings);
-		
-		
 		final MapBasedResponse result = clazz.newInstance();
 		Assert.assertTrue(result instanceof AbstractMapBasedResult);
 		
 		Assert.assertEquals(mappings,ReflectionTestUtils.getField(result, "mappings"));
 	}
+	
 	@Test
 	public final void createClassOnlyOncePermGenSpace() throws InstantiationException, IllegalAccessException {
 		final Collection<Mapping> mappings = createMappings();
@@ -37,8 +35,10 @@ public class MapBasedClassFactoryTest {
 		for(int i = 1 ; i <= 1e6; i++) {
 			 Assert.assertEquals(clazz, mapBasedClassFactory.createClass(mappings));
 		}
-		
-		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		final Map<UUID,Class> results = (Map<UUID, Class>) ReflectionTestUtils.getField(mapBasedClassFactory, "classes");
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(clazz, results.values().iterator().next());
 	}
 	
 	
