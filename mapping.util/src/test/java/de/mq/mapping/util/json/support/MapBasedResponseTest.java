@@ -16,6 +16,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 
 
+import de.mq.mapping.util.json.support.MapBasedResponse.ChildField;
 import de.mq.mapping.util.json.support.MapBasedResponse.InfoField;
 
 
@@ -254,13 +255,24 @@ public class MapBasedResponseTest {
 	}
 	
 	@Test
-	public final void InfoType() {
+	public final void InfoField() {
 		int i=0;
 		for(InfoField infoField : MapBasedResponse.InfoField.values()) {
 			Assert.assertEquals(infoField, InfoField.valueOf(infoField.name()));
 			i++;
 		}
 		Assert.assertEquals(4, i);
+		
+	}
+	
+	@Test
+	public final void childField() {
+		int i=0;
+		for(ChildField childField : MapBasedResponse.ChildField.values()) {
+			Assert.assertEquals(childField, ChildField.valueOf(childField.name()));
+			i++;
+		}
+		Assert.assertEquals(3, i);
 		
 	}
 	

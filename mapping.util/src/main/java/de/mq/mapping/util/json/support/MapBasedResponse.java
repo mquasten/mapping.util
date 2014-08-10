@@ -28,10 +28,24 @@ public interface MapBasedResponse {
 			this.name=name;
 		}
 		
-		public final String field() {
+		final String field() {
 			return name;
 		}
 		
+	}
+	
+	enum ChildField {
+		Value("value"),
+		Key("key"),
+		Id("id");
+		private String name; 
+		ChildField(final String name) {
+			this.name=name;
+		}
+		
+		final String field() {
+			return name;
+		}
 	}
 
 	<T> T field(final InfoField infoField, final Class<? extends T> targetClass);

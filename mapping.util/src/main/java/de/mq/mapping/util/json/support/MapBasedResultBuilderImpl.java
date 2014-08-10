@@ -7,6 +7,8 @@ import java.util.HashSet;
 import org.springframework.util.Assert;
 
 import de.mq.mapping.util.json.MapBasedResultBuilder;
+import de.mq.mapping.util.json.support.MapBasedResponse.ChildField;
+import de.mq.mapping.util.json.support.MapBasedResponse.InfoField;
 
 
 class MapBasedResultBuilderImpl implements MapBasedResultBuilder {
@@ -35,10 +37,10 @@ class MapBasedResultBuilderImpl implements MapBasedResultBuilder {
 	 * @see de.mq.mapping.util.json.support.MapBasedResultBuilder#withFieldMapping(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public MapBasedResultBuilder withFieldMapping(final String node, final String field, final String ...paths ) {
+	public MapBasedResultBuilder withFieldMapping(final String node, final InfoField infoField, final String ...paths ) {
 		Assert.hasText(node, "Node is mandatory");
-		Assert.hasText(field, "Field is mandatory");
-		fieldMappings.add( new Mapping(node, field, paths));
+		Assert.notNull(infoField, "Field is mandatory");
+		fieldMappings.add( new Mapping(node, infoField.field(), paths));
 		return this;
 	}
 	
@@ -46,9 +48,9 @@ class MapBasedResultBuilderImpl implements MapBasedResultBuilder {
 	 * @see de.mq.mapping.util.json.support.MapBasedResultBuilder#withChildMapping(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public MapBasedResultBuilder withChildMapping(String field, String ... paths){
-		Assert.hasText(field, "Field is mandatory");
-		childMappings.add(new Mapping(null, field, paths));
+	public MapBasedResultBuilder withChildMapping(final ChildField  childField, final String ... paths){
+		Assert.notNull(childField, "Field is mandatory");
+		childMappings.add(new Mapping(null, childField.field(), paths));
 		return this;
 	}
 	

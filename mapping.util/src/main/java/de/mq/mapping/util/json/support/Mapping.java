@@ -26,7 +26,7 @@ class Mapping  {
 	static final String PARENT_FIELDNAME = ".parent";
 
 
-	final Set<Mapping> childs = new HashSet<>();
+	private final Set<Mapping> childs = new HashSet<>();
 	
 	
 	private  final  String key ;

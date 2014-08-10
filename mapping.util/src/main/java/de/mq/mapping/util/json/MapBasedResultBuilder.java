@@ -2,13 +2,15 @@ package de.mq.mapping.util.json;
 
 
 import java.util.Collection;
+
+import de.mq.mapping.util.json.support.MapBasedResponse;
 public interface MapBasedResultBuilder {
 
-	MapBasedResultBuilder withParentMapping(String node, String... paths);
+	MapBasedResultBuilder withParentMapping(final String node, final String... paths);
 
-	MapBasedResultBuilder withFieldMapping(String node, String field, String... paths);
+	MapBasedResultBuilder withFieldMapping(final String node, final MapBasedResponse.InfoField fieldInfo, final String... paths);
 
-	MapBasedResultBuilder withChildMapping(String field, String... paths);
+	MapBasedResultBuilder withChildMapping(final MapBasedResponse.ChildField field, final String... paths);
 
 	Collection<?> build();
 
