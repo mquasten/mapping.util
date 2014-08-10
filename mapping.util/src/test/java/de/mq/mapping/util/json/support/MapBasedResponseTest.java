@@ -253,6 +253,17 @@ public class MapBasedResponseTest {
 		
 	}
 	
+	@Test
+	public final void InfoType() {
+		int i=0;
+		for(InfoField infoField : MapBasedResponse.InfoField.values()) {
+			Assert.assertEquals(infoField, InfoField.valueOf(infoField.name()));
+			i++;
+		}
+		Assert.assertEquals(4, i);
+		
+	}
+	
 	
 	
 	

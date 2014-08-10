@@ -23,6 +23,9 @@ import org.springframework.util.StringUtils;
 class Mapping  {
 	
 	
+	static final String PARENT_FIELDNAME = ".parent";
+
+
 	final Set<Mapping> childs = new HashSet<>();
 	
 	
@@ -198,7 +201,7 @@ private MapBasedResultRow newRow(final Class<? extends MapBasedResultRow> clazz)
 		if(StringUtils.hasText(field)){
 			return field;
 		}
-		return "parent";
+		return PARENT_FIELDNAME;
 	}
 	
 	
