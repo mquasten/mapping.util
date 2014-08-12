@@ -14,6 +14,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.sf.cglib.proxy.NoOp;
 
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.SerializationUtils;
 
@@ -21,7 +22,7 @@ import de.mq.mapping.util.json.MapBasedResponseClassFactory;
 import de.mq.mapping.util.json.MapBasedResultBuilder;
 
 
-
+@Component
 public class SimpleMapBasedResponseClassFactoryImpl implements MapBasedResponseClassFactory {
 	
 	
