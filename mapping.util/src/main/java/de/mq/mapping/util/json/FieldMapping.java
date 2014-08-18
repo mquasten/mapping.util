@@ -10,7 +10,7 @@ import org.springframework.core.convert.converter.Converter;
 import de.mq.mapping.util.proxy.NoConverter;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD} )
 public @interface FieldMapping {
 	String value() default "";
 	Class<? extends Converter<?,?>>  converter() default NoConverter.class;

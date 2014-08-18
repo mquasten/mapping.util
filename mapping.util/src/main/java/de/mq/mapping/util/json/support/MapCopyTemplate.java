@@ -2,11 +2,14 @@ package de.mq.mapping.util.json.support;
 
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.ReflectionUtils.MethodCallback;
 import org.springframework.util.StringUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 
@@ -54,6 +57,25 @@ public class MapCopyTemplate implements MapCopyOperations {
 
 			}
 		});
+		
+		ReflectionUtils.doWithMethods(target.getClass(), new MethodCallback() {
+
+			@Override
+			public void doWith(final Method method) throws IllegalArgumentException, IllegalAccessException {
+				if( ! method.isAnnotationPresent(FieldMapping.class)) {
+					return;
+				}
+				final String name = method.getAnnotation(FieldMapping.class).value();
+				@SuppressWarnings("unchecked")
+				final Converter<Object, Object> converter = (Converter<Object, Object>) BeanUtils.instantiateClass(method.getAnnotation(FieldMapping.class).converter());
+				try {
+					method.invoke(target, new Object[] {converter.convert(values.get(name))});
+				} catch (final InvocationTargetException ex) {
+					ReflectionUtils.handleInvocationTargetException(ex);
+				}
+				
+				
+			} } );
 	}
 
 }
